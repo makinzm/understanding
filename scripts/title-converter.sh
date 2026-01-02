@@ -6,8 +6,7 @@
 
 convert_title() {
     local title="$1"
-    echo "FAILED"
-    # echo "$title" | tr '[:upper:]' '[:lower:]' | tr ' ' '-'
+    echo "$title" | tr '[:upper:]' '[:lower:]' | tr ' ' '-'
 }
 
 if [ -t 0 ]; then
