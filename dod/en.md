@@ -11,6 +11,7 @@ I define "done" as having a clear and concise explanation of the topic that can 
 ### 0. Common
 - [x] Describe the concrete sentences to support understanding ( not just writing "I understand ..." )
 - [x] Describe the condition which can be applied ( who, when, where )
+- [x] Include information about licenses and copyrights
 
 ### 1. Computer Science / Machine Learning
 
