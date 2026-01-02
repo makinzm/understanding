@@ -76,7 +76,7 @@ $z = LayerNorm(z + mha\_out)$
 - LayerNorm(x) = $\frac{x - \mu}{\sigma} * \gamma + \beta$
   - where $\mu$ is mean of x, $\sigma$ is standard deviation of x, $\gamma$ and $\beta$ are learnable parameters.
 
-> [!NOTE]
+> [!TIP]
 > [LayerNorm — PyTorch 2.9 documentation](https://docs.pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html)
 
 ## 5. Feed Forward
@@ -89,3 +89,24 @@ FFN(x) = max(0, $xW_1 + b_1$)$W_2 + b_2$
 
 The output dimension is $\mathbb{R}^{n \times d_{model}}$.
 
+# Difference between Transformer and Seq2Seq with Attention
+
+- Parallelization: Transformer allows for parallel processing of input sequences, while traditional Seq2Seq models with attention are often sequential in nature ( from Section 4 of the paper)
+- Path lengths: $O(1)$ in Transformer vs. $O(n)$ in RNN (from Table 1 of the paper)
+
+# Experiments
+
+- Dataset: 
+  - WMT 2014 English-German dataset
+  -  WMT 2014 English-French dataset
+- Hardware: 8 NVIDIA P100 GPUs
+- Optimizer: Adam with learning rate schedule
+- Regularization: Dropout and label smoothing
+
+> [!TIP]
+> [マイナーな正則化手法「ラベル平滑化」は実は効果アリアリらしい #機械学習 - Qiita](https://qiita.com/wing_man/items/a1d5ab1bba7d763d9369)
+> [全ての学習率スケジューリングを過去にするOptimizer](https://zenn.dev/dena/articles/6f04641801b387)
+
+- Results:
+    - English-German: state-of-the-art BLEU score of 28.4
+    - English-French: state-of-the-art BLEU score of 41.0
