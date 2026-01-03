@@ -49,7 +49,7 @@ MHA consists of several scaled dot-product attention layers.
 
 ### 3.2.1. Encoder & Decoder MHA (Self-Atttention)
 
-linear projections of queries, keys and values are created from the same input $z$. i.e. $Q = zW_i^Q$, $K = zW_i^K$, $V = zW_i^V$ for each head $i$ ($W_i^Q \in \mathbb{R}^{d_model \times d_k}$, $W_i^K \in \mathbb{R}^{d_{model} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{model} \times d_v}$).
+linear projections of queries, keys and values are created from the same input $z$. i.e. $Q = zW_i^Q$, $K = zW_i^K$, $V = zW_i^V$ for each head $i$ ($W_i^Q \in \mathbb{R}^{d_{model} \times d_k}$, $W_i^K \in \mathbb{R}^{d_{model} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{model} \times d_v}$).
 
 > [!NOTE]
 > "we found it beneficial to linearly project the queries, keys and values h times with different"
@@ -88,6 +88,16 @@ FFN(x) = max(0, $xW_1 + b_1$)$W_2 + b_2$
 - $b_1 \in \mathbb{R}^{d_{ff}}$, $b_2 \in \mathbb{R}^{d_{model}}$
 
 The output dimension is $\mathbb{R}^{n \times d_{model}}$.
+
+## 6. Final Linear & Softmax
+
+Finally, the output of decoder is passed through a linear layer followed by a softmax layer to produce the final output probabilities.
+
+- Linear layer: $y = zW_{final} + b_{final}$
+  - where $W_{final} \in \mathbb{R}^{d_{model} \times V}$, $b_{final} \in \mathbb{R}^{V}$, $V$ is the vocabulary size.
+
+> [!IMPORTANT]
+> There is no explanation about the final output dimension in the paper. However, Figure 3~5 supports that the final output dimension is $\mathbb{R}^{V}$.
 
 # Difference between Transformer and Seq2Seq with Attention
 
