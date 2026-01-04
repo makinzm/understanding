@@ -102,3 +102,35 @@ And then, these outputs are concatenated and passed to Task-specific Towers.
 
 >[!NOTE]
 > Optimizer is AdamW though contrasive learning transformer uses RAdamScheduleFree.
+
+## 3. Aggregated Embeddings
+
+### Model Architecture
+
+Calculate various aggregated features from user behavior history.
+
+### Code Details
+
+- Event Type: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/feature_engineering/feature_engineering/aggregated_features_baseline/constants.py#L25-L31
+- Calculator Class: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/feature_engineering/feature_engineering/aggregated_features_baseline/calculators.py#L51-L73
+- Merge all features: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/feature_engineering/feature_engineering/aggregated_features_baseline/features_aggregator.py#L358-L395
+
+
+## Ensemble
+
+Use Gaussian Error Linear Unit (GELU) based Stacking model to ensemble three types of user representations.
+
+This ensemble model is also trained.
+
+### Code Details
+
+https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/stacking/run/stacking.py
+
+- Model: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/stacking/run/stacking.py#L275-L283
+  - https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/stacking/src/ensemble/stacking/torch/model.py#L80-L128
+- DataSet: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/stacking/run/stacking.py#L250-L273
+  - https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/stacking/src/ensemble/stacking/torch/dataset.py#L8
+
+## Results
+
+Ensemble model outperformed each single model.
