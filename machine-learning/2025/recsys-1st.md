@@ -76,3 +76,29 @@ Whether the user is in the evaluation set is also predicted, and then weighed lo
   - https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/cl_transformer/scripts/create_embeddings.py#L1304
 7. Optimizer: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/cl_transformer/scripts/create_embeddings.py#L1362-L1372
 
+## 2. Multi-task Learning
+
+### Model Architecture
+
+Progressive Layered Extraction (PLE) based Multi-task Learning Transformer model.
+
+Sequential User Behavior is processed by Transformer layers.
+Numerical Feature is processed by MLP.
+And then, these outputs are concatenated and passed to Task-specific Towers.
+
+### Code Details
+
+1. Create Dataset: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/create_dataset.py
+  - Sequencial Behavior Dataset: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/create_dataset.py#L303-L308
+  - Numerical Feature Dataset: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/create_dataset.py#L288-L298C24
+2. Training: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/train.py
+  - Concatenate Shared Expert and Task-specific Expert: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/train.py#L772-L798
+  - Compute User Embedding: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/train.py#L910-L932
+3. Create Embeddings: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/create_embeddings.py
+  - Create Embedding: https://github.com/yukia18/recsys-challenge-2025-1st-place/blob/main/mtl_transformer/src/create_embeddings.py#L874-L896
+
+>[!NOTE]
+> There is duplicated code in creating embeddings and training (e.g., `LightningRecsysModel` class)
+
+>[!NOTE]
+> Optimizer is AdamW though contrasive learning transformer uses RAdamScheduleFree.
