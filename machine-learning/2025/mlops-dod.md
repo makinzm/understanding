@@ -69,7 +69,7 @@ Deep Learningフレームワーク:
 - [Hydra](https://github.com/facebookresearch/hydra) / [OmegaConf](https://github.com/omry/omegaconf): 設定管理、マルチラン実験
 - [MLflow](https://github.com/mlflow/mlflow) / [Weights & Biases](https://github.com/wandb/wandb) / [Neptune.ai](https://github.com/neptune-ai/neptune-client): 実験トラッキング
 - [DVC](https://github.com/iterative/dvc) / [Pachyderm](https://github.com/pachyderm/pachyderm): データバージョン管理
-- [uv](https://github.com/astral-sh/uv)com/conda/cond / [Poetry](https://github.com/python-poetry/poetry) / [Conda](https://github.a): 依存関係管理
+- [uv](https://github.com/astral-sh/uv) / [Poetry](https://github.com/python-poetry/poetry) / [Conda](https://github.a): 依存関係管理
 
 モデルフォーマット・相互運用:
 - [ONNX](https://github.com/onnx/onnx): Open Neural Network Exchange（フレームワーク間でモデルを交換する標準フォーマット）
