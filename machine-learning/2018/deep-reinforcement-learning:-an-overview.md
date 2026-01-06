@@ -31,7 +31,7 @@ We have to understand and memorize these terminologies before going into details
 | $s_t,S$ | state, state space | A representation of the current situation of the agent in the environment. |
 | $a_t,A$ | action, action space | A set of all possible actions the agent can take. |
 | $r_t$ | reward | A scalar feedback signal indicating the immediate benefit of the agent's action. |
-| $p(s_{t+1}/s_t,a_t)$ | state transition probability | | The probability of transitioning to state $s_{t+1}$ given the current state $s_t$ and action $a_t$. |
+| $p(s_{t+1}/s_t,a_t)$ | state transition probability | The probability of transitioning to state $s_{t+1}$ given the current state $s_t$ and action $a_t$. |
 | $\gamma$ | discount factor | A factor between 0 and 1 that determines the importance of future rewards. |
 | $\pi(a_t/s_t)$ | policy | A mapping from states to a probability distribution over actions. |
 | $v_{\pi}(s_t)$ | state-value function | The expected return (cumulative reward) starting from state $s_t$ and following policy $\pi$. |
