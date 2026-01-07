@@ -1,5 +1,7 @@
 # Meta Information
 
+[[1810.06339] Deep Reinforcement Learning](https://arxiv.org/abs/1810.06339)
+
 ```bibtex
 @article{DBLP:journals/corr/abs-1810-06339,
   author       = {Yuxi Li},
@@ -62,3 +64,46 @@ Maximize the cumulative reward $R_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}$.
 ### 2.4.2. Value Functions -> See Section "Terminologies"
 
 ### 2.4.3. Exploration vs. Exploitation
+
+There is a trade-off between exploration (trying new actions to discover their effects) and exploitation (choosing actions that are known to yield high rewards). Simply we can use $\epsilon$-greedy strategy, but more detailed methods is introduced in Chapter 7.
+
+### 2.4.4. Dynamic Programming
+
+DP: $k$ means iteration step which is not time step $t$.
+
+```math
+\begin{align}
+v_{k+1}(s) = \sum_{a\in A} \pi(a/s) \sum_{s'\in S} p(s'/s,a) [r(s,a,s') + \gamma v_k(s')]
+\end{align}
+```
+
+PI: Policy Iteration
+
+1. Policy Evaluation: Evaluate $v_{\pi}$ for current policy $\pi$ using DP.
+2. Policy Improvement: Improve policy $\pi$ using $v_{\pi}$.
+
+Generalized Policy Iteration (GPI): Convergence of policy evaluation and policy improvement.
+
+VI: Value Iteration
+
+```math
+\begin{align}
+v_{*}(s) & = \max_{a\in A} \left(
+R(s,a) + \gamma \sum_{s'\in S} p(s'/s,a) v_{*}(s')
+\right) \\
+R(s,a) & = \sum_{s'\in S} p(s'/s,a) r(s,a,s')
+\end{align}
+```
+
+Bellman Operator:
+
+```math
+\begin{align}
+\mathcal{T}^{\pi} v(s) & := \sum_{a\in A} \pi(a/s) \sum_{s'\in S} p(s'/s,a) [r(s') + \gamma v(s')] \\
+r(s) & := \sum_{a\in A} \pi(a/s) \sum_{s'\in S} p(s'/s,a) r(s,a,s') \\
+\end{align}
+```
+
+Fixed Point: $\mathcal{T}^{\pi} v_{\pi} = v_{\pi}$, which helps to prove convergence.
+
+### 2.4.5. Monte Carlo
