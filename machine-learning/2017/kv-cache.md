@@ -1,5 +1,9 @@
-（一次的な内容です）
-## KVキャッシュ（Key-Value Cache）
+## Meta Information
+
+Key Value Cacheが初めて登場した論文については見つけることはできませんでしたが、次の参考資料が参考になります。
+
+1. [The KV Cache: Memory Usage in Transformers from Efficient NLP - YouTube](https://www.youtube.com/watch?v=80bIUggRJf4)
+2. [KV Cache Secrets: Boost LLM Inference Efficiency | by Shoa Aamir | Medium](https://medium.com/@shoa.devs/kv-cache-secrets-boost-llm-inference-efficiency-ae6c53968857)
 
 ### 1/3. なぜキャッシュが有効なのか？
 
@@ -10,7 +14,7 @@ Transformerの自己注意機構では、各トークン生成時に**過去の�
 - 3トークン目：3個のトークンで計算（1-2個目を再計算）
 - n トークン目：n個のトークンで計算
 
-→ 計算量がO(n²)になり、非効率的
+→ 行列計算を考えると、計算量は $O(\Sigma_{i=1}^{n} i^2) = O(n^3)$ にもなり、非常に非効率です。
 
 ### 2/3. 何をキャッシュし、何を更新するか？
 
@@ -50,15 +54,13 @@ Transformerの自己注意機構では、各トークン生成時に**過去の�
 - Decoderの自己注意部分でKVキャッシュを使用
 
 ### メリット
-- 計算量：O(n²) → O(n)に削減
+- 計算量：$O(n^2)$ → $O(n)$ に削減
 - 生成速度が大幅に向上
 - メモリ使用量とのトレードオフ
 
-excellent question! Qをキャッシュしない理由を説明します。
-
 ## 3/3. なぜQは最新のものだけでよいのか？
 
-### 自己回帰生成の仕組み
+### 自己回帰生成の仕組み(Decoder-onlyモデル)
 
 各ステップで**「今生成しようとしているトークン」が過去のトークンすべてを参照する**という一方向的な関係があります：
 
@@ -86,20 +88,24 @@ excellent question! Qをキャッシュしない理由を説明します。
 ```
 "The cat sat on the" まで生成済みで "mat" を生成する場合：
 
-Q_mat: "次のトークンは何？" （今知りたいこと）
+Q_6: "The cat sat on the の次は何？"（位置6の "the" のEmbeddingから計算）
 ↓ 注意を向ける先 ↓
-K_The, K_cat, K_sat, K_on, K_the: 「これまでの文脈情報」
-V_The, V_cat, V_sat, V_on, V_the: 「その内容」
+K_1="The", K_2="cat", K_3="sat", K_4="on", K_5="the": 「これまでの文脈情報」
+V_1="The", V_2="cat", V_3="sat", V_4="on", V_5="the": 「その内容」
 
-Q_The や Q_cat は「The」「cat」を生成した時だけ必要で、
-"mat" を生成する今は不要
+このときに新たに計算されるのは:
+- Q_6, K_6, V_6（位置6の "the" から）のみ
+- K_1~K_5, V_1~V_5 はキャッシュから取得
+
+過去のQueryは不要:
+- Q_1, Q_2, Q_3, Q_4, Q_5 は各トークン生成時に使い捨て
+- "mat" 生成時には参照されない
 ```
 
 ### まとめ
 
 - **Q**: 「今これから生成するトークンの視点」→ 使い捨て
 - **K, V**: 「過去の文脈情報」→ 今後も繰り返し参照される
-
 
 ---
 
