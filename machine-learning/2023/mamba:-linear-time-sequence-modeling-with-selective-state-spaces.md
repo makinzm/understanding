@@ -36,6 +36,52 @@ Selective SSMs guarantee the following properties:
 3. Long context: The quality and efficiency enables training with 1M token context length.
 
 > [!NOTE]
-> Transformer computation is O($N^2$) because generating each token requires attending to all previous O(N) tokens. In contrast, Mamba's computation is O(N) because each token is generated using a fixed amount of computation that does not depend on the sequence length.
+> Transformer computation is O($L^2$) because generating each token requires attending to all previous O(L) tokens. In contrast, Mamba's computation is O(L) because each token is generated using a fixed amount of computation that does not depend on the sequence length.
 
+# 2. State Space Models
 
+## Overview
+
+```math
+\begin{align}
+t \in \mathbb{R} & : \text{time} \\
+x(t) \in \mathbb{R} & : \text{input signal} \\
+y(t) \in \mathbb{R} & : \text{output signal} \\
+N \in \mathbb{Z}^{+} & : \text{state dimension} \\
+A \in \mathbb{R}^{N \times N} & : \text{state matrix} \\
+B \in \mathbb{R}^{N \times 1} & : \text{input matrix} \\
+C \in \mathbb{R}^{1 \times N} & : \text{output matrix} \\
+\Delta \in \mathbb{R} & : \text{discretization step} \\
+h(t) \in \mathbb{R}^{N} & : \text{hidden state}
+\end{align}
+```
+
+The continuous-time SSM is defined as follows:
+
+```math
+\begin{align}
+h'(t) & = A h(t) + B x(t) & \text{`'` indicates derivative w.r.t. time} \\
+y(t) & = C h(t)
+\end{align}
+```
+
+The discrete-time SSM is defined as follows:
+
+```math
+\begin{align}
+\bar{A} &= \exp(\Delta A) \in \mathbb{R}^{N \times N} \\
+\bar{B} &= (\Delta A)^{-1} (\exp(\Delta A) - I) \Delta B \in \mathbb{R}^{N \times 1} \\
+h_t & = \bar{A} h_{t-1} + \bar{B} x_t\\
+y_t & = C h_t
+\end{align}
+```
+
+The previous calculation is written in convolution form as follows:
+
+```math
+\begin{align}
+L & : \text{sequence length} \\
+\bar{K} & = (C \bar{B}, C \bar{AB}, \dots, C \bar{A}^{k}\bar{B}, \dots) \in \mathbb{L} \\
+y & = \bar{K} * x \in \mathbb{R}^{L}
+\end{align}
+```
