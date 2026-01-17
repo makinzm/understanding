@@ -255,3 +255,14 @@ y_t & \in \mathbb{R}^{B \times D} & : \text{output at time } t
 > Convolution form requires time-invariance:
 > - S4: $\bar{K} = (C\bar{B}, C\bar{A}\bar{B}, C\bar{A}^2\bar{B}, \ldots)$ is a fixed kernel
 > - S6: $\bar{A}_t, \bar{B}_t, C_t$ change at each time step → no fixed kernel exists
+
+## 3.3. Efficient Implementation of Selective SSMs
+
+We use parralel associative scan to make S6 efficient like Fast Fourier Transform (FFT).
+
+And we use HBM and SRAM to make memory access efficient.
+
+S6 needs the same memory as optimized Transformer implementation with FlashAttention.
+
+
+
