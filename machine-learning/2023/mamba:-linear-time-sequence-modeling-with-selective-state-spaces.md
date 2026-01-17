@@ -265,4 +265,7 @@ And we use HBM and SRAM to make memory access efficient.
 S6 needs the same memory as optimized Transformer implementation with FlashAttention.
 
 
+## 3.4. A Simplified SSM Architecture
+
+S6 has fewer parameters than attention, so we expand the model dimension from $D$ to $2D$, giving $O(12D^2)$ total parameters—the same as a Transformer block.
 
