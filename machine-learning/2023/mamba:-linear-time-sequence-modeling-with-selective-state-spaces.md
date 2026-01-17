@@ -205,7 +205,7 @@ Using Zero-Order Hold (ZOH) discretization:
 ```math
 \begin{align}
 \bar{A}_{t,b,d} &= \exp(\Delta_{t,b,d} \cdot A_d^{(N \times N)}) \in \mathbb{R}^{N \times N} \\
-\bar{B}_{t,b,d} &= (\Delta_{t,b,d} \cdot A_d^{(N \times N)})^{-1}(\bar{A}_{t,b,d} - I) \cdot (\Delta_{t,b,d} \cdot B_{t,b}) \in \mathbb{R}^{N}
+\bar{B}_{t,b,d} &= (\Delta_{t,b,d} \cdot A_d^{(N \times N)})^{-1}\exp(\Delta_{t,b,d}\bar{A}_{t,b,d} - I) \cdot (\Delta_{t,b,d} \cdot B_{t,b}) \in \mathbb{R}^{N}
 \end{align}
 ```
 
@@ -269,3 +269,27 @@ S6 needs the same memory as optimized Transformer implementation with FlashAtten
 
 S6 has fewer parameters than attention, so we expand the model dimension from $D$ to $2D$, giving $O(12D^2)$ total parameters—the same as a Transformer block.
 
+Mamba architecture is inspired by H3 (Hungry Hungry Hippo) and Gated Attention Units (GAU).
+
+> [!NOTE]
+>
+> H3: [[2212.14052] Hungry Hungry Hippos: Towards Language Modeling with State Space Models](https://arxiv.org/abs/2212.14052)
+>
+> GAU: [[2202.10447] Transformer Quality in Linear Time](https://arxiv.org/abs/2202.10447)
+
+## 3.5. Properties of Selection Mechanism
+
+### 3.5.1. Connection to Gating Mechanisms
+
+Mamba is a generalization of RNNs with gating mechanisms like LSTMs and GRUs, which is proven in Appendix C.
+
+### 3.5.2. Interpretation of Selection Mechanisms
+
+1. Variable Spacing: Selectivity allows filltering out irrelevant inputs by decreasing step size $\Delta_t$.
+2. Filtering Context: Empirical results of other sequence models show low performance with long contexts due to irrelevant information. Selective SSMs can focus on relevant parts by adjusting $B_t$ and $C_t$.
+3. Boundary Ressetting: When $\Delta_t$ is large, the state $h_t$ depends less on $h_{t-1}$, effectively resetting the state at boundaries (e.g., sentence or paragraph boundaries).
+
+### 3.5.3. Additional Model Details
+
+1. Real vs. Complex: Allmost all the SSMs use complex numbers but real is also empirically good, so Mamba uses real numbers.
+2. Initialization:  S4D-Real from [[2206.11893] On the Parameterization and Initialization of Diagonal State Space Models](https://arxiv.org/abs/2206.11893)
