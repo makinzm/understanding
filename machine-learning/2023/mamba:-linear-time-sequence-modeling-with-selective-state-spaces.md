@@ -293,3 +293,47 @@ Mamba is a generalization of RNNs with gating mechanisms like LSTMs and GRUs, wh
 
 1. Real vs. Complex: Allmost all the SSMs use complex numbers but real is also empirically good, so Mamba uses real numbers.
 2. Initialization:  S4D-Real from [[2206.11893] On the Parameterization and Initialization of Diagonal State Space Models](https://arxiv.org/abs/2206.11893)
+
+# 4. Empirical Evaluation
+
+## 4.1. Synthetic Tasks
+
+Mamba is better than S4 or Transformer on Selective Copying and Induction Head tasks.
+
+## 4.2. Language Modeling
+
+Mamba is the same performance as Transformer++, paticularly on long contexts, and has the good scaling property.
+
+- Dataset: Pile dataset.
+- Optimizer: AdamW.
+
+## 4.3. DNA Modeling
+
+Mamba also outperforms other models on genomics datasets.
+
+- Dataset: HG38
+
+## 4.4. Audio Modeling and Generation
+
+Mamba outperforms other models on audio modeling tasks.
+
+- Dataset: YouTubeMix dataset.
+
+## 4.5. Speed and Memory Benchmarks
+
+Mamba doesn't need caching previous states, so it is faster and more memory-efficient than Transformers for long sequences, so it can handle 4-5x throughput and 20-40x faster.
+
+## 4.6. Model Ablations
+
+Selective algorithms improve the performance of Mamba.
+
+$\Delta$ selection is the most important among the three selections.
+
+Changing the state size $N$ helps perplexity improvement.
+
+> [!NOTE]
+>
+> Perplexity: A measurement of how well a probability model predicts a sample. Lower perplexity indicates better performance.
+> 
+> [ Perplexity - Wikipedia ]( https://en.wikipedia.org/wiki/Perplexity )
+
