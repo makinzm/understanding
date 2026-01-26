@@ -7,6 +7,15 @@
 
 # 1. Introduction
 
+LMs (Language Models) performance depends on prompt quality for each task.
+
+Prompt tuning is implemented interactively widely but is inefficient and not reusable.
+
+More systematic approaches are needed to optimize prompts and compose LM calls, so we propose DSPy.
+
+- DSPy programming model: A framework that replaces manual prompt engineering with modular, declarative components that can be composed like neural network layers to build LM pipelines.
+- DSPy compiler: An optimizer that automatically generates effective prompts and fine-tuning strategies for DSPy modules by bootstrapping examples from training data and a validation metric.
+
 # 2. Related Work
 
 # 3. The DSPy Programming Model
