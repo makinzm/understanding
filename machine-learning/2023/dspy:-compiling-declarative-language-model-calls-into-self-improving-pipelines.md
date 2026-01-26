@@ -18,6 +18,14 @@ More systematic approaches are needed to optimize prompts and compose LM calls, 
 
 # 2. Related Work
 
+DSPy draws inspiration from deep learning framework like Torch and Chainer.
+
+In-context learning has enabled sophisticated LM behavior through prompting techniques like Chain of Thought and tool usage including retrieval models and APIs. Existing toolkits like LangChain, Semantic Kernel, and LlamaIndex facilitate this but rely on hand-written prompt templates, which DSPy aims to replace.
+
+Recent work applies discrete optimization and RL to find effective prompts, typically for single LM calls. DSPy generalizes this by optimizing arbitrary multi-stage pipelines through bootstrapping demonstrations from high-level declarative signatures, using techniques like cross-validation or potentially RL and Bayesian optimization.
+
+This paper demonstrates that DSPy enables building strong LM systems from modular components without hand-crafted prompts, systematically exploring the design space at a high level of abstraction.
+
 # 3. The DSPy Programming Model
 
 # 4. The DSPy Compiler
