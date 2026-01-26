@@ -50,3 +50,12 @@ In inverted residuals, shortcut connections are between the bottleneck layers.
 
 This model separates capacity and expressiveness, linear transformation is for capacity, and non-linear transformation is for expressiveness.
 
+# 4. Model architecture
+
+Input -> Conv2d with 32 channels -> Bottleneck x 19 -> Conv2d 1 x 1 with 1280 channels -> AvgPool -> Conv2d with number of classes channels
+
+# 5. Implementation Notes
+
+## 5.1. Memory efficient inference
+
+TODO
