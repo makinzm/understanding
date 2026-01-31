@@ -379,7 +379,7 @@ The most effective use of AI assistants combines their strengths with human judg
 # References
 
 - Anthropic. (2024). Claude 3.5 Sonnet. https://www.anthropic.com/claude
-- OpenAI. (2024). GPT-4 Technical Report. https://arxiv.org/abs/2303.08774
+- OpenAI. (2023). GPT-4 Technical Report. https://arxiv.org/abs/2303.08774
 - Bommasani, R., et al. (2021). On the Opportunities and Risks of Foundation Models. arXiv:2108.07258
 - Wei, J., et al. (2022). Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. arXiv:2201.11903
 - Schick, T., et al. (2023). Toolformer: Language Models Can Teach Themselves to Use Tools. arXiv:2302.04761
