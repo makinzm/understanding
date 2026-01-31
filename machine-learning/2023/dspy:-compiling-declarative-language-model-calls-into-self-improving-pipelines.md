@@ -67,7 +67,10 @@ In essence: The compiler automatically finds good examples by running your progr
 
 1. Free hand crafted prompts
 1. Parameterizing the modules
-1. Find complex pipelines automatically
+1. Systematically explore complex pipelines through modularity
+
+> [!NOTE]
+> DSPy cannot automatically invent new algorithms, modules or pipelines. Instead, it focuses on optimizing and composing existing modules to create effective LM systems without manual prompt engineering.
 
 # 6. Case Study: Math Word Problems
 
@@ -103,5 +106,35 @@ DSPy's optimization approach can match or outperform expert-written prompts with
 
 # 7. Case Study: Complex Question Answering
 
+Task: Multi-hop question answering in open-domain "fullwiki" setting
+- Uses ColBERTv2 retriever on Wikipedia 2017 abstracts
+- Training: 200 examples, Dev: 300 examples, Test: 1000 examples
+
+Four DSPy Programs Evaluated:
+
+1. vanilla = `dspy.Predict("question -> answer")` - direct prediction
+2. CoT RAG = Chain-of-thought with single retrieval step (from Section 3.2)
+3. react = `dspy.ReAct("question -> answer", tools=[Retrieve], max_iters=5)` - multi-step agent
+4. multihop = BasicMultiHop - custom 2-hop program that generates queries iteratively
+
+Compilation Strategies:
+- Same as GSM8K: fewshot, bootstrap, bootstrap×2, ensemble
+- Plus: multihop_t5 - finetune T5-Large (770M params) using bootstrapped demonstrations
+
+Key Results:
+- multihop program performs best - iterative query generation improves passage retrieval
+- bootstrap compilation significantly outperforms fewshot prompting and expert human reasoning for ReAct
+- Llama2-13b with DSPy compilation becomes competitive with GPT-3.5
+- T5-Large finetuned model: 39.3% answer EM using only 200 labeled + 800 unlabeled examples
+  - Orders of magnitude lower inference cost than GPT-3.5
+- Best result: multihop ensemble with GPT-3.5: 54.7% dev, 45.6% test
+
+Validation of Goals:
+- Simple modular programs (multihop is ~15 lines) outperform hand-crafted prompts
+- Smaller/cheaper models compiled with DSPy match larger models with manual prompting
+- Multi-hop architecture systematically explored through modular composition
+- Demonstrates ability to build complex pipelines (retrieval → query generation → re-retrieval → answer)
+
 # 8. Conclusion
 
+DSPy is a programming model and compiler that automates the creation of effective LM pipelines without hand-crafted prompts.
