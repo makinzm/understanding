@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir *)",
+      "Bash(ls *)",
+      "Bash(echo * | bash scripts/title-converter.sh)",
+      "Bash(bash scripts/*)",
+      "Bash(make *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git checkout *)",
+      "Bash(git branch*)",
+      "Bash(git push *)",
+      "Bash(gh pr *)",
+      "Edit(./**)",
+      "Write(./**)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ]
+  }
+}

@@ -48,3 +48,8 @@ ML/CS documents must additionally have:
 
 - Branch from `main`, use descriptive branch names
 - PR template requires: Objective, Effect, Test, Note, and DoD checklist
+
+## Output Formats
+
+- In English.
+- Please git add and commit changes with meaningful messages if you edit files.
