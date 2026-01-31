@@ -7,6 +7,7 @@ A personal knowledge repository documenting understanding of topics in computer 
 ## Directory Structure
 
 - `machine-learning/` - ML papers and concepts, organized by year (e.g., `2017/`, `2023/`)
+- `software-engineering/` - Software engineering topics, organized by category then year (e.g., `architecture/2025/`, `databases/2025/`)
 - `foods/` - Food culture documentation (currently Japanese seasonal foods)
 - `dod/` - Definition of Done guidelines (English and Japanese)
 - `scripts/` - Utility shell scripts
