@@ -50,6 +50,19 @@ Example: `ChainOfThought`, `Predict`, `ReAct` are all interchangeable modules th
 
 # 4. The DSPy Compiler
 
+The DSPy compiler automatically optimizes programs through a teleprompter (optimizer) in three stages:
+
+Stage 1: Candidate Generation
+- Run the program on training data, filter examples that pass the metric, and use successful traces as demonstration candidates for each module.
+
+Stage 2: Parameter Optimization
+- Select the best demonstrations (or instructions) using hyperparameter tuning methods like random search or Optuna, or finetune the LM using the bootstrapped demonstrations.
+
+Stage 3: Higher-Order Program Optimization
+- Modify the program structure itself (e.g., create ensembles that run multiple versions in parallel and combine their outputs).
+
+In essence: The compiler automatically finds good examples by running your program, then uses those examples to improve the program's prompts or finetune models.
+
 # 5. Goals of Evaluation
 
 # 6. Case Study: Math Word Problems
