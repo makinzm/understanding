@@ -65,6 +65,10 @@ In essence: The compiler automatically finds good examples by running your progr
 
 # 5. Goals of Evaluation
 
+1. Free hand crafted prompts
+1. Parameterizing the modules
+1. Find complex pipelines automatically
+
 # 6. Case Study: Math Word Problems
 
 # 7. Case Study: Complex Question Answering
