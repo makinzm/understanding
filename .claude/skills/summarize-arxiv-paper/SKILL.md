@@ -71,5 +71,9 @@ Follow these rules strictly when writing the summary. These come from the Defini
 - Use `> [!CAUTION]` for personal interpretations that may contain errors
 - Define all mathematical variables before using them, with explicit dimensions
 - Use tables for terminologies, comparisons, and experimental results
-- Use `---` horizontal rules to separate major sections when appropriate
 - Content can be written in English or Japanese, matching the paper's language or user preference
+
+## Don'ts
+
+- Do NOT copy-paste large blocks of text from the paper. Always paraphrase and summarize in your own words.
+- Do NOT create table of experimental results because they are already present in the paper. Only include key results with context.
