@@ -58,3 +58,8 @@ The difference between NewSQL and OLAP DBMSs is the purpose of the system, where
 
 # Categories of NewSQL Systems
 
+ai
+
+a
+
+a
