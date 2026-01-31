@@ -28,6 +28,26 @@ This paper demonstrates that DSPy enables building strong LM systems from modula
 
 # 3. The DSPy Programming Model
 
+DSPy provides three main abstractions:
+
+1. Signatures: input-output behavior.
+1. Modules: hand-prompting techniques and arbitrary pipelines.
+1. Teleprompters: optimization to maximize a metric.
+
+## 3.1. Natural Language Signatures can abstract prompting & finetuning
+
+"A DSPy signature is natural-language typed declaration of a function" like `question -> answer`.
+
+It specifies what not how and can be automatically compiled into optimized prompts or fine-tuned models.
+
+## 3.2. Parameterized & Templated Modules abstract prompting techniques
+
+Modules are reusable components that implement a DSPy signature.
+
+They can be composed like functions and automatically learn their behavior (prompts/demonstrations) through parameterization, replacing hand-written prompting techniques.
+
+Example: `ChainOfThought`, `Predict`, `ReAct` are all interchangeable modules that work with any signature.
+
 # 4. The DSPy Compiler
 
 # 5. Goals of Evaluation
