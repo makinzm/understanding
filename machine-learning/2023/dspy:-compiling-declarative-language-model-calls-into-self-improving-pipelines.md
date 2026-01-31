@@ -71,6 +71,36 @@ In essence: The compiler automatically finds good examples by running your progr
 
 # 6. Case Study: Math Word Problems
 
+Dataset: GSM8K grade school math questions
+
+- Training: 200 examples
+- Development: 300 examples  
+- Test: 1.3k examples
+
+Three DSPy Programs Evaluated:
+
+1. vanilla = `dspy.Predict("question -> answer")` - one-step prediction
+2. CoT = `dspy.ChainOfThought("question -> answer")` - two-step reasoning
+3. reflection = ThoughtReflection module - generates 5 reasoning chains, compares them, produces final answer
+
+Compilation Strategies:
+
+1. none - zero-shot (no compilation)
+2. fewshot - random k=8 demonstrations from training
+3. bootstrap - auto-generate demonstrations + optimize selection via random search
+4. bootstrap×2 - use bootstrapped program as teacher to bootstrap again
+5. ensemble - combine top-7 bootstrapped programs with majority voting
+
+Key Results:
+
+- Bootstrap compilation dramatically improves all programs across both GPT-3.5 and Llama2-13b
+- Without human reasoning chains, DSPy bootstrap matches or exceeds performance with expert hand-crafted CoT prompts
+- reflection program performs best overall
+- Accuracy improved from 4-20% (zero-shot) to 49-88% (compiled) by composing generic modules rather than hand-crafting prompts
+- Llama2-13b with DSPy competitive with Llama2-34b using manual prompts
+
+DSPy's optimization approach can match or outperform expert-written prompts without requiring hand-crafted reasoning chains.
+
 # 7. Case Study: Complex Question Answering
 
 # 8. Conclusion
