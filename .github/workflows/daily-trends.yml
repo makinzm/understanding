@@ -2,10 +2,14 @@ name: Daily AI & Tech Trends
 
 on:
   schedule:
-    # Runs at 21:00 UTC = 6:00 AM JST (next day)
+    # Runs automatically at 21:00 UTC = 6:00 AM JST (next day)
     - cron: '0 21 * * *'
 
-  # Allow manual trigger for testing
+  # Allow manual/ad-hoc execution
+  # To trigger manually:
+  #   1. Go to GitHub: Actions tab → Daily AI & Tech Trends
+  #   2. Click "Run workflow" button → Select branch → Run workflow
+  # Or use GitHub CLI: gh workflow run daily-trends.yml
   workflow_dispatch:
 
 jobs:

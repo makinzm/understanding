@@ -21,6 +21,8 @@ Reports are generated daily at 6:00 AM JST via GitHub Actions (`.github/workflow
 
 Each report triggers a pull request for review before merging.
 
+**Manual Triggering**: You can also run the workflow ad-hoc anytime. See [MANUAL-TRIGGER.md](MANUAL-TRIGGER.md) for instructions.
+
 ## Compliance
 
 All data collection respects terms of service, robots.txt, and rate limits.
