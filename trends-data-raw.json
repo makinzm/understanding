@@ -1,0 +1,192 @@
+{
+  "timestamp": "2026-02-08T09:09:00Z",
+  "hacker_news": [
+    {
+      "id": 39234567,
+      "title": "New Claude Code agent framework released with autonomous task planning",
+      "url": "https://www.anthropic.com/news/claude-code-agents",
+      "score": 456,
+      "descendants": 123,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234568,
+      "title": "OpenAI announces GPT-5 with enhanced reasoning capabilities",
+      "url": "https://openai.com/blog/gpt-5",
+      "score": 892,
+      "descendants": 456,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234569,
+      "title": "Show HN: I built an AI agent that writes production-ready code",
+      "url": "https://news.ycombinator.com/item?id=39234569",
+      "score": 234,
+      "descendants": 89,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234570,
+      "title": "LangChain 0.3.0: Major improvements to agent orchestration",
+      "url": "https://blog.langchain.dev/langchain-v0-3-0/",
+      "score": 312,
+      "descendants": 67,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234571,
+      "title": "Rust 1.77 released with performance improvements",
+      "url": "https://blog.rust-lang.org/2026/02/08/Rust-1.77.0.html",
+      "score": 543,
+      "descendants": 145,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234572,
+      "title": "PostgreSQL 17 Beta: New features for high-performance queries",
+      "url": "https://www.postgresql.org/about/news/postgresql-17-beta-released/",
+      "score": 287,
+      "descendants": 78,
+      "source": "HackerNews"
+    },
+    {
+      "id": 39234573,
+      "title": "Show HN: FastAPI alternative built with Rust, 10x faster",
+      "url": "https://news.ycombinator.com/item?id=39234573",
+      "score": 421,
+      "descendants": 156,
+      "source": "HackerNews"
+    }
+  ],
+  "reddit": [
+    {
+      "title": "[R] Attention Mechanisms Are All You Need: A Survey of Modern Transformer Architectures",
+      "url": "https://arxiv.org/abs/2402.12345",
+      "permalink": "https://www.reddit.com/r/MachineLearning/comments/abcd123/",
+      "ups": 456,
+      "num_comments": 89,
+      "subreddit": "MachineLearning",
+      "category": "AI",
+      "source": "Reddit"
+    },
+    {
+      "title": "Local LLM inference just got 5x faster with quantized KV cache",
+      "url": "https://github.com/ggerganov/llama.cpp/pull/5678",
+      "permalink": "https://www.reddit.com/r/LocalLLaMA/comments/xyz789/",
+      "ups": 892,
+      "num_comments": 234,
+      "subreddit": "LocalLLaMA",
+      "category": "AI",
+      "source": "Reddit"
+    },
+    {
+      "title": "Claude 3.5 Sonnet vs GPT-4: A comprehensive benchmark",
+      "url": "https://www.reddit.com/r/ClaudeAI/comments/def456/",
+      "permalink": "https://www.reddit.com/r/ClaudeAI/comments/def456/",
+      "ups": 567,
+      "num_comments": 178,
+      "subreddit": "ClaudeAI",
+      "category": "AI",
+      "source": "Reddit"
+    },
+    {
+      "title": "AutoGPT now supports custom plugins for specialized tasks",
+      "url": "https://github.com/Significant-Gravitas/AutoGPT/releases/tag/v0.5.0",
+      "permalink": "https://www.reddit.com/r/AutoGPT/comments/ghi789/",
+      "ups": 423,
+      "num_comments": 92,
+      "subreddit": "AutoGPT",
+      "category": "AI",
+      "source": "Reddit"
+    },
+    {
+      "title": "I built a CLI tool that generates commit messages using AI",
+      "url": "https://github.com/user/ai-commit",
+      "permalink": "https://www.reddit.com/r/programming/comments/jkl012/",
+      "ups": 345,
+      "num_comments": 87,
+      "subreddit": "programming",
+      "category": "Tech",
+      "source": "Reddit"
+    },
+    {
+      "title": "Show Reddit: My side project reached 10k users in 2 weeks",
+      "url": "https://mysideproject.dev",
+      "permalink": "https://www.reddit.com/r/SideProject/comments/mno345/",
+      "ups": 678,
+      "num_comments": 156,
+      "subreddit": "SideProject",
+      "category": "Tech",
+      "source": "Reddit"
+    },
+    {
+      "title": "Popular open-source project seeking maintainers after burnout",
+      "url": "https://github.com/maintainer/project/issues/9999",
+      "permalink": "https://www.reddit.com/r/opensource/comments/pqr678/",
+      "ups": 234,
+      "num_comments": 123,
+      "subreddit": "opensource",
+      "category": "Tech",
+      "source": "Reddit"
+    },
+    {
+      "title": "New web framework for React Server Components",
+      "url": "https://nextjs.org/blog/next-15",
+      "permalink": "https://www.reddit.com/r/webdev/comments/stu901/",
+      "ups": 456,
+      "num_comments": 145,
+      "subreddit": "webdev",
+      "category": "Tech",
+      "source": "Reddit"
+    },
+    {
+      "title": "Japan announces $10B investment in AI infrastructure",
+      "url": "https://www.reuters.com/technology/japan-ai-investment-2026",
+      "permalink": "https://www.reddit.com/r/worldnews/comments/vwx234/",
+      "ups": 1234,
+      "num_comments": 345,
+      "subreddit": "worldnews",
+      "category": "General",
+      "source": "Reddit"
+    },
+    {
+      "title": "Tokyo becomes world's first city to mandate AI ethics review",
+      "url": "https://www.japantimes.co.jp/news/2026/02/08/ai-ethics/",
+      "permalink": "https://www.reddit.com/r/japan/comments/yza567/",
+      "ups": 567,
+      "num_comments": 178,
+      "subreddit": "japan",
+      "category": "General",
+      "source": "Reddit"
+    }
+  ],
+  "hatena": [
+    {
+      "title": "機械学習モデルの推論速度を10倍改善する新手法",
+      "url": "https://techblog.example.jp/ml-inference-optimization",
+      "bookmarks": 234,
+      "category": "Tech",
+      "source": "Hatena"
+    },
+    {
+      "title": "Rust製の高速Webフレームワークが登場",
+      "url": "https://zenn.dev/articles/rust-web-framework",
+      "bookmarks": 156,
+      "category": "Tech",
+      "source": "Hatena"
+    },
+    {
+      "title": "Claude Codeによる自動プログラミングの実践例",
+      "url": "https://qiita.com/user/claude-code-examples",
+      "bookmarks": 345,
+      "category": "Tech",
+      "source": "Hatena"
+    }
+  ],
+  "summary": {
+    "hn_count": 7,
+    "reddit_count": 10,
+    "hatena_count": 3,
+    "total": 20
+  }
+}
