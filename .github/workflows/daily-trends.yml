@@ -1,0 +1,30 @@
+name: Daily AI & Tech Trends
+
+on:
+  schedule:
+    # Runs at 21:00 UTC = 6:00 AM JST (next day)
+    - cron: '0 21 * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  collect-trends:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code to collect trends
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt_file: .github/prompts/daily-trends-prompt.md
