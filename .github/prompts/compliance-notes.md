@@ -8,8 +8,6 @@ This document archives the terms of service compliance requirements for all sour
 - **Status**: ✅ Official API, fully allowed
 - **Official Documentation**: https://github.com/HackerNews/API
 - **Terms of Service**: https://www.ycombinator.com/legal/ (Y Combinator Legal)
-- **API Guidelines**: https://github.com/HackerNews/API#usage-guidelines
-- **Rate Limits**: None specified, but implement 1-second delays as courtesy
 - **User-Agent**: `Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)`
 - **robots.txt**: Not applicable (using official API)
 - **Last Checked**: 2026-02-08
@@ -22,7 +20,6 @@ This document archives the terms of service compliance requirements for all sour
 - **Terms of Service**: https://www.redditinc.com/policies/user-agreement
 - **API Rules**: https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki
 - **Developer Platform Agreement**: https://www.redditinc.com/policies/data-api-terms
-- **Rate Limits**: 60 requests per minute (implement 1 request per second)
 - **User-Agent**: `web:understanding-trends:v1.0.0 (by /u/YOUR_REDDIT_USERNAME)`
   - **ACTION REQUIRED**: Replace `YOUR_REDDIT_USERNAME` with actual Reddit username
 - **robots.txt**: https://www.reddit.com/robots.txt
