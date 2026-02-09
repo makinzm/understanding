@@ -41,5 +41,4 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: ${{ steps.load-prompt.outputs.prompt }}
-          additional_permissions: |
-            bash: allow
+          claude_args: '--allowedTools Bash,Read,Write,Edit,Grep,Glob'
