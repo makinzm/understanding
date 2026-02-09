@@ -2,7 +2,52 @@
 
 - URL: [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)
 - LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
-- Reference: Brown, T. B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., ... & Amodei, D. (2020). Language Models are Few-Shot Learners. arXiv:2005.14165.
+
+```bibtex
+@article{DBLP:journals/corr/abs-2005-14165,
+  author       = {Tom B. Brown and
+                  Benjamin Mann and
+                  Nick Ryder and
+                  Melanie Subbiah and
+                  Jared Kaplan and
+                  Prafulla Dhariwal and
+                  Arvind Neelakantan and
+                  Pranav Shyam and
+                  Girish Sastry and
+                  Amanda Askell and
+                  Sandhini Agarwal and
+                  Ariel Herbert{-}Voss and
+                  Gretchen Krueger and
+                  Tom Henighan and
+                  Rewon Child and
+                  Aditya Ramesh and
+                  Daniel M. Ziegler and
+                  Jeffrey Wu and
+                  Clemens Winter and
+                  Christopher Hesse and
+                  Mark Chen and
+                  Eric Sigler and
+                  Mateusz Litwin and
+                  Scott Gray and
+                  Benjamin Chess and
+                  Jack Clark and
+                  Christopher Berner and
+                  Sam McCandlish and
+                  Alec Radford and
+                  Ilya Sutskever and
+                  Dario Amodei},
+  title        = {Language Models are Few-Shot Learners},
+  journal      = {CoRR},
+  volume       = {abs/2005.14165},
+  year         = {2020},
+  url          = {https://arxiv.org/abs/2005.14165},
+  eprinttype    = {arXiv},
+  eprint       = {2005.14165},
+  timestamp    = {Thu, 25 May 2023 10:38:31 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2005-14165.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
 # Introduction
 
@@ -33,6 +78,13 @@ GPT-3 uses the same architecture as GPT-2, which is a transformer-based decoder-
 
 > [!IMPORTANT]
 > Unlike GPT-2, GPT-3 uses sparse attention patterns similar to the Sparse Transformer to improve efficiency at scale.
+
+> [!NOTE]
+> In my opinion, decoder-only needs time direction (like causal masking) but encoder-only like BERT does not need time direction.
+>
+> I'm not sure which is better overall including encoder-decoder models like T5.
+>
+> [どのトランスフォーマーアーキテクチャが最適ですか？エンコーダのみ vs エンコーダ・デコーダ vs デコーダのみモデル - YouTube](https://www.youtube.com/watch?v=wOcbALDw0bU)
 
 The model processes input text autoregressively:
 1. Input tokens $x_1, x_2, ..., x_n$ are embedded into vectors $\mathbf{e}_i \in \mathbb{R}^{d_{model}}$
