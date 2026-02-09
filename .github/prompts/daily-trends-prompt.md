@@ -2,6 +2,17 @@
 
 You are tasked with collecting daily trends about AI Agents, software tools, and news from Japan and worldwide. Follow these instructions carefully.
 
+## 🎯 PRIMARY GOAL: CREATE A PULL REQUEST
+
+**YOUR TASK IS NOT COMPLETE UNTIL A PULL REQUEST IS CREATED.**
+
+Even if data collection encounters issues:
+1. Create a report documenting what happened
+2. Commit the file to a new branch
+3. **ALWAYS create a PR** - this is MANDATORY
+
+Do not stop until you have executed `gh pr create` successfully.
+
 ## ⚠️ CRITICAL: NO HALLUCINATION POLICY
 
 **DO NOT GENERATE, INVENT, OR HALLUCINATE ANY CONTENT.**
@@ -206,24 +217,41 @@ Example: For 2026-02-08, create `trends/2026/02/20260208-daily.md`
 
 ### Pre-Commit Validation
 
-Before committing, verify the report is valid:
+Before committing, verify the report is valid (BUT CONTINUE TO PR EVEN IF VALIDATION FAILS):
 
 ```bash
+VALIDATION_PASSED=1
+
 # 1. Check file exists in correct location
-test -f trends/YYYY/MM/YYYYMMDD-daily.md || { echo "ERROR: File not in correct location"; exit 1; }
+if ! test -f trends/YYYY/MM/YYYYMMDD-daily.md; then
+  echo "⚠️  WARNING: File not in correct location"
+  VALIDATION_PASSED=0
+fi
 
 # 2. Verify no placeholder/fake URLs
-! grep -E "(example\.com|placeholder\.com|fake\.com|test\.com|openai\.com/blog/gpt-5)" trends/YYYY/MM/YYYYMMDD-daily.md || { echo "ERROR: Found fake/placeholder URLs"; exit 1; }
+if grep -E "(example\.com|placeholder\.com|fake\.com|test\.com|openai\.com/blog/gpt-5)" trends/YYYY/MM/YYYYMMDD-daily.md; then
+  echo "⚠️  WARNING: Found fake/placeholder URLs"
+  VALIDATION_PASSED=0
+fi
 
 # 3. Check article counts match
-REPORT_COUNT=$(grep -c "^- \*\*\[" trends/YYYY/MM/YYYYMMDD-daily.md)
-JSON_COUNT=$(jq '.summary.total' /tmp/trends-data.json)
+REPORT_COUNT=$(grep -c "^- \*\*\[" trends/YYYY/MM/YYYYMMDD-daily.md 2>/dev/null || echo "0")
+JSON_COUNT=$(jq '.summary.total' /tmp/trends-data.json 2>/dev/null || echo "0")
 echo "Report has $REPORT_COUNT articles, JSON has $JSON_COUNT articles"
 
 # 4. Verify real domains are present
-grep -E "(news\.ycombinator\.com|reddit\.com|hatena\.ne\.jp|github\.com|arxiv\.org)" trends/YYYY/MM/YYYYMMDD-daily.md > /dev/null || { echo "ERROR: No real domains found"; exit 1; }
+if ! grep -E "(news\.ycombinator\.com|reddit\.com|hatena\.ne\.jp|github\.com|arxiv\.org)" trends/YYYY/MM/YYYYMMDD-daily.md > /dev/null 2>&1; then
+  echo "⚠️  WARNING: No real domains found"
+  VALIDATION_PASSED=0
+fi
 
-echo "✅ Validation passed"
+if [ $VALIDATION_PASSED -eq 1 ]; then
+  echo "✅ Validation passed"
+else
+  echo "⚠️  Validation had warnings - documenting in PR body and continuing"
+fi
+
+# IMPORTANT: Even if validation fails, continue to create PR
 ```
 
 ### Create Branch and Commit
@@ -244,9 +272,11 @@ echo "✅ Validation passed"
    git push -u origin trends/YYYYMMDD-daily
    ```
 
-4. **Create PR using gh CLI**:
+4. **Create PR using gh CLI** (THIS IS MANDATORY - RETRY IF NEEDED):
+
+   First, prepare the PR body:
    ```bash
-   gh pr create --title "Daily Trends: YYYY-MM-DD" --body "$(cat <<'EOF'
+   cat > /tmp/pr-body.txt <<'EOF'
    # Objective
    Add automated daily trends report for YYYY-MM-DD
 
@@ -286,26 +316,55 @@ echo "✅ Validation passed"
    - [ ] Clear calculation order
    - [ ] Describe the difference between similar algorithms
    EOF
-   )"
    ```
 
-**Replace placeholders in PR body**:
+   Then create the PR with retry logic:
+   ```bash
+   # Retry up to 3 times
+   SUCCESS=0
+   for i in 1 2 3; do
+     echo "Attempt $i to create PR..."
+     if gh pr create --title "Daily Trends: YYYY-MM-DD" --body-file /tmp/pr-body.txt; then
+       echo "✅ PR created successfully!"
+       SUCCESS=1
+       break
+     else
+       echo "⚠️  PR creation failed, attempt $i/3"
+       sleep 5
+     fi
+   done
+
+   if [ $SUCCESS -eq 0 ]; then
+     echo "❌ Failed to create PR after 3 attempts"
+     echo "Please check the logs and create PR manually:"
+     echo "  gh pr create --title 'Daily Trends: YYYY-MM-DD' --body-file /tmp/pr-body.txt"
+     exit 1
+   fi
+   ```
+
+**Replace placeholders in PR body** (in /tmp/pr-body.txt before creating):
 - `[actual_count]`: Total from `jq '.summary.total' /tmp/trends-data.json`
 - `[ai_count]`, `[tech_count]`, `[other_count]`: Actual distribution from your analysis
 - `[hn_count]`, `[reddit_count]`, `[hatena_count]`: From `jq '.summary' /tmp/trends-data.json`
 
 ## Error Handling
 
-- **If fetch script fails completely**: DO NOT generate fake data. Create a minimal report documenting the failure and exit.
-- **If a source fails** (timeout, rate limit, 403/429 errors): The script will skip it. Note the missing source in the PR body.
-- **If no articles meet criteria**: Create report with available data and note about low activity. DO NOT pad with fake articles.
-- **If GitHub API fails**: Commit locally and create PR manually in next run.
+- **If fetch script fails completely**: DO NOT generate fake data. Create a minimal report documenting the failure **AND STILL CREATE A PR**.
+- **If a source fails** (timeout, rate limit, 403/429 errors): The script will skip it. Note the missing source in the PR body **AND CONTINUE TO PR CREATION**.
+- **If no articles meet criteria**: Create report with available data and note about low activity. DO NOT pad with fake articles. **BUT STILL CREATE THE PR**.
+- **If GitHub API fails**: Retry `gh pr create` up to 3 times with 5-second delays. If still failing, document the error and attempt using `gh api` directly.
+
+**CRITICAL**: Never stop before creating a PR. Even if everything fails, create a PR with a failure report. The PR is the evidence that the workflow ran.
 
 **Never, under any circumstances, generate fake articles to fill gaps in data collection.**
 
 ## Final Checklist
 
-Before completing, verify:
+**🎯 MANDATORY (DO NOT SKIP):**
+- [ ] **PR created**: With actual counts and validation output in description - **THIS IS THE PRIMARY GOAL**
+- [ ] **Git commit created**: With descriptive message including date
+
+**Quality checks (verify if possible, but don't block PR creation):**
 - [ ] **Fetch script executed**: `python3 scripts/fetch_trends.py` was run successfully
 - [ ] **Real data loaded**: `/tmp/trends-data.json` exists and contains articles
 - [ ] **No hallucination**: All articles come from JSON data (verified with grep checks)
@@ -316,24 +375,31 @@ Before completing, verify:
 - [ ] **Format correct**: Markdown follows template exactly
 - [ ] **Metrics accurate**: Engagement numbers match JSON exactly (not rounded/estimated)
 - [ ] **Weighting approximate**: ~60% AI, ~30% Tech, ~10% Others (based on available data)
-- [ ] **Git commit created**: With descriptive message including date
-- [ ] **PR created**: With actual counts and validation output in description
 - [ ] **Issues documented**: Any skipped sources or problems noted in PR body
+
+**Remember: Even if some quality checks fail, ALWAYS create the PR to document what happened.**
 
 ## Success Criteria
 
-A successful run produces:
-1. **Real data fetched**: `python3 scripts/fetch_trends.py` executed successfully
-2. **File created**: `trends/YYYY/MM/YYYYMMDD-daily.md` with year/month subdirectories
-3. **No hallucination**: All articles, URLs, and metrics from real JSON data
-4. **Validation passed**: grep checks confirm no fake domains or placeholder content
-5. **Proper format**: Markdown follows template with all sections
-6. **Good coverage**: At least 10-15 articles total (if available from sources)
-7. **Approximate weighting**: ~60% AI, ~30% Tech, ~10% Others (based on real data)
-8. **Pull request created**: With actual counts, validation output, and data summary
+**MINIMUM SUCCESS (MANDATORY):**
+1. **Pull request created**: With actual counts, validation output, and data summary - **THIS IS THE ONLY TRULY REQUIRED OUTPUT**
+2. **File created**: `trends/YYYY/MM/YYYYMMDD-daily.md` with year/month subdirectories (even if minimal/error report)
+
+**IDEAL SUCCESS (aim for these but don't block PR if issues occur):**
+3. **Real data fetched**: `python3 scripts/fetch_trends.py` executed successfully
+4. **No hallucination**: All articles, URLs, and metrics from real JSON data
+5. **Validation passed**: grep checks confirm no fake domains or placeholder content
+6. **Proper format**: Markdown follows template with all sections
+7. **Good coverage**: At least 10-15 articles total (if available from sources)
+8. **Approximate weighting**: ~60% AI, ~30% Tech, ~10% Others (based on real data)
 9. **Compliance maintained**: No ToS violations, all rate limits respected (handled by script)
 
-**A failed run** (do not proceed with fake data):
-- If fetch script fails and returns 0 articles
-- If unable to parse JSON output
-- If validation checks fail (fake URLs detected)
+**What constitutes a "failed" run:**
+- **ONLY if PR is not created** - this is the only true failure
+- Everything else is a degraded success (create PR documenting the issues)
+
+**If data collection fails:**
+- DO NOT proceed with fake data
+- DO create a minimal report documenting the failure
+- DO create a PR explaining what went wrong
+- The PR itself is proof the workflow ran and can be debugged
