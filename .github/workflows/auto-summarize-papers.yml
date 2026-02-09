@@ -32,9 +32,9 @@ jobs:
         id: load-prompt
         run: |
           PROMPT_CONTENT=$(cat .github/prompts/auto-summarize-papers-prompt.md)
-          echo "prompt<<EOF" >> $GITHUB_OUTPUT
+          echo "prompt<<PROMPT_DELIMITER_END" >> $GITHUB_OUTPUT
           echo "$PROMPT_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "PROMPT_DELIMITER_END" >> $GITHUB_OUTPUT
 
       - name: Run Claude Code to summarize paper
         id: claude
