@@ -18,10 +18,10 @@ Do not stop until you have created a PR with a paper summary.
 
 ### Fetch Open Issues
 
-Use the GitHub CLI to get open issues:
+Use the GitHub CLI to get open issues (sorted by oldest first):
 
 ```bash
-gh issue list --state open --limit 20 --json number,title,body,labels
+gh issue list --state open --limit 20 --json number,title,body,labels | jq 'sort_by(.number)'
 ```
 
 ### Identify Paper Issues
@@ -40,9 +40,9 @@ Look for issues that contain arXiv URLs in the body or title. Valid patterns:
 
 Example filtering logic:
 ```bash
-# Get issues and filter for arXiv URLs
+# Get issues (oldest first) and filter for arXiv URLs
 gh issue list --state open --limit 20 --json number,title,body | \
-  jq -r '.[] | select(.body | test("arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}")) | "\(.number)|\(.title)|\(.body)"' | \
+  jq -r 'sort_by(.number) | .[] | select(.body | test("arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}")) | "\(.number)|\(.title)|\(.body)"' | \
   head -1
 ```
 
@@ -217,9 +217,9 @@ If the first issue doesn't contain an arXiv URL:
    FOUND_PAPER=0
 
    while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ $FOUND_PAPER -eq 0 ]; do
-     # Get the next open issue
+     # Get the next open issue (oldest first)
      ISSUE_DATA=$(gh issue list --state open --limit 20 --json number,title,body | \
-       jq -r ".[$ATTEMPT] | select(.body | test(\"arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}\"))")
+       jq -r "sort_by(.number) | .[$ATTEMPT] | select(.body | test(\"arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}\"))")
 
      if [ -n "$ISSUE_DATA" ]; then
        FOUND_PAPER=1
@@ -284,8 +284,8 @@ If `gh pr create` fails after 3 retries:
 ## Example Workflow
 
 ```bash
-# 1. Get open issues
-ISSUES=$(gh issue list --state open --limit 20 --json number,title,body)
+# 1. Get open issues (oldest first)
+ISSUES=$(gh issue list --state open --limit 20 --json number,title,body | jq 'sort_by(.number)')
 
 # 2. Find first paper issue
 PAPER_ISSUE=$(echo "$ISSUES" | jq -r '.[] | select(.body | test("arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}")) | "\(.number)|\(.title)|\(.body)"' | head -1)
