@@ -10,7 +10,7 @@ The user will provide an arXiv URL (e.g., `https://arxiv.org/abs/2312.00752`) as
 
 ## Steps
 
-1. **Convert URL to ar5iv**: Replace `arxiv.org` with `ar5iv.org` in the provided URL to get an HTML-rendered version of the paper.
+1. **Convert URL to ar5iv**: Convert the arXiv URL from `https://arxiv.org/abs/<ID>` to `https://ar5iv.labs.arxiv.org/html/<ID>` to get an HTML-rendered version of the paper.
 2. **Fetch the paper**: Use WebFetch to retrieve the paper content from the ar5iv URL. Use the prompt: "Extract the full paper content including: title, authors, abstract, all section headings and their content, mathematical formulas, algorithms, experimental results, datasets, and references."
 3. **Extract the publication year**: Get the year from the arXiv ID (e.g., `2312.00752` → `2023`, `1706.03762` → `2017`).
 4. **Generate the filename**: Run `echo "<paper title>" | bash scripts/title-converter.sh` to convert the paper title to a kebab-case filename.
