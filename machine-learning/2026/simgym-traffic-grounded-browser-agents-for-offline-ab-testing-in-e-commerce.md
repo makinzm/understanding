@@ -204,6 +204,10 @@ Bootstrap resampling across $n \in \{50, 100, 150, \ldots, 700\}$ agents per sho
 
 Without memory, 45.70% of agents get stuck in loops (vs. 8.50%), and 45% never reach the add-to-cart decision stage. The correlation collapses to 0.29 (near random).
 
+> [!NOTE]
+>
+> 個人的に、なぜメモリなしとありを比較したのか？という疑問がある。過去の行動の履歴を参照しないエージェントがどのように振る舞うかを確認したい、という意図は理解できるが、実際のユーザも過去の行動履歴を参照しないわけではないため、あまり意味のある比較ではないように思える。ただ、当たり前だと思われることも定量的に示すことは重要なので、その意味では価値があるのかもしれない。
+
 #### Persona Ablation
 
 | Configuration | Pearson | Alignment | Align. Prob. | Goal Reached |
