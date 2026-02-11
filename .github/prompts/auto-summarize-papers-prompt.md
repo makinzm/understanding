@@ -36,7 +36,8 @@ Look for issues that contain arXiv URLs in the body or title. Valid patterns:
 1. **Sort by issue number** (oldest first) to handle backlog
 2. **Extract arXiv URL** from the issue body or title
 3. **Skip non-paper issues** (blog posts, Zenn articles, general discussions, etc.)
-4. **Retry up to 3 times** if the first issue is not a paper
+4. **Skip issues that already have a PR** (open or merged) to avoid duplication
+5. **Retry up to 3 times** if the first issue is not a paper or already has a PR
 
 Example filtering logic:
 ```bash
@@ -47,6 +48,33 @@ gh issue list --state open --limit 20 --json number,title,body | \
 ```
 
 If no arXiv URL is found in the first issue, try the next one (up to 3 attempts total).
+
+### Deduplication Check
+
+**Before processing any issue**, verify no PR already exists for it:
+
+```bash
+# Check if an open or merged PR already references this issue
+EXISTING_PR=$(gh pr list --state all --limit 50 --json number,title,body \
+  | jq -r ".[] | select(.body | test(\"Closes #$ISSUE_NUMBER\")) | .number" \
+  | head -1)
+
+if [ -n "$EXISTING_PR" ]; then
+  echo "⏭️  Issue #$ISSUE_NUMBER already has PR #$EXISTING_PR — skipping"
+  # Move on to the next candidate issue
+fi
+
+# Also check if the branch already exists on the remote
+PAPER_ID=$(echo "$ARXIV_URL" | grep -oP '\d{4}\.\d{4,5}')
+BRANCH_NAME="paper/arxiv-$PAPER_ID"
+
+if git ls-remote --exit-code --heads origin "$BRANCH_NAME" > /dev/null 2>&1; then
+  echo "⏭️  Branch $BRANCH_NAME already exists — skipping"
+  # Move on to the next candidate issue
+fi
+```
+
+If either check finds a match, skip this issue and try the next one (up to the retry limit).
 
 ## Step 2: Extract arXiv URL and Issue Information
 
@@ -284,32 +312,57 @@ If `gh pr create` fails after 3 retries:
 ## Example Workflow
 
 ```bash
-# 1. Get open issues (oldest first)
-ISSUES=$(gh issue list --state open --limit 20 --json number,title,body | jq 'sort_by(.number)')
+# 1. Get open issues (oldest first) that contain arXiv URLs
+ISSUES=$(gh issue list --state open --limit 20 --json number,title,body \
+  | jq 'sort_by(.number) | [.[] | select(.body | test("arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}"))]')
 
-# 2. Find first paper issue
-PAPER_ISSUE=$(echo "$ISSUES" | jq -r '.[] | select(.body | test("arxiv.org/(abs|pdf)/[0-9]{4}\\.[0-9]{4,5}")) | "\(.number)|\(.title)|\(.body)"' | head -1)
+ISSUE_COUNT=$(echo "$ISSUES" | jq 'length')
 
-if [ -z "$PAPER_ISSUE" ]; then
+if [ "$ISSUE_COUNT" -eq 0 ]; then
   echo "✅ No paper issues found"
   exit 0
 fi
 
-# 3. Extract issue details
-ISSUE_NUMBER=$(echo "$PAPER_ISSUE" | cut -d'|' -f1)
-ISSUE_TITLE=$(echo "$PAPER_ISSUE" | cut -d'|' -f2)
-ARXIV_URL=$(echo "$PAPER_ISSUE" | grep -oP 'https?://arxiv\.org/(abs|pdf)/[0-9]{4}\.[0-9]{4,5}' | head -1)
+# 2. Iterate through candidate issues, skipping ones that already have a PR
+FOUND=0
+for i in $(seq 0 $((ISSUE_COUNT - 1))); do
+  PAPER_ISSUE=$(echo "$ISSUES" | jq -r ".[$i] | \"\(.number)|\(.title)|\(.body)\"")
+  ISSUE_NUMBER=$(echo "$PAPER_ISSUE" | cut -d'|' -f1)
+  ISSUE_TITLE=$(echo "$PAPER_ISSUE" | cut -d'|' -f2)
+  ARXIV_URL=$(echo "$PAPER_ISSUE" | grep -oP 'https?://arxiv\.org/(abs|pdf)/[0-9]{4}\.[0-9]{4,5}' | head -1)
+  ARXIV_URL=$(echo "$ARXIV_URL" | sed 's|/pdf/|/abs/|')
+  PAPER_ID=$(echo "$ARXIV_URL" | grep -oP '\d{4}\.\d{4,5}')
+  BRANCH_NAME="paper/arxiv-$PAPER_ID"
 
-# Convert PDF URL to abs URL if needed
-ARXIV_URL=$(echo "$ARXIV_URL" | sed 's|/pdf/|/abs/|')
+  # 3. Deduplication: skip if a PR already closes this issue
+  EXISTING_PR=$(gh pr list --state all --limit 50 --json number,title,body \
+    | jq -r ".[] | select(.body | test(\"Closes #$ISSUE_NUMBER\")) | .number" | head -1)
+  if [ -n "$EXISTING_PR" ]; then
+    echo "⏭️  Issue #$ISSUE_NUMBER already has PR #$EXISTING_PR — skipping"
+    continue
+  fi
 
-echo "📄 Found paper: Issue #$ISSUE_NUMBER - $ISSUE_TITLE"
-echo "🔗 URL: $ARXIV_URL"
+  # 4. Deduplication: skip if branch already exists on the remote
+  if git ls-remote --exit-code --heads origin "$BRANCH_NAME" > /dev/null 2>&1; then
+    echo "⏭️  Branch $BRANCH_NAME already exists — skipping"
+    continue
+  fi
 
-# 4. Summarize using skill
+  echo "📄 Found paper: Issue #$ISSUE_NUMBER - $ISSUE_TITLE"
+  echo "🔗 URL: $ARXIV_URL"
+  FOUND=1
+  break
+done
+
+if [ "$FOUND" -eq 0 ]; then
+  echo "✅ All paper issues already have PRs. Nothing to do."
+  exit 0
+fi
+
+# 5. Summarize using skill
 # (This will be done via Skill tool invocation)
 
-# 5. Create PR with issue link
+# 6. Create PR with issue link
 # (Follow Step 5 above)
 ```
 
@@ -317,6 +370,7 @@ echo "🔗 URL: $ARXIV_URL"
 
 **🎯 MANDATORY:**
 - [ ] **Paper issue found**: With valid arXiv URL (or gracefully exit if none)
+- [ ] **Deduplication checked**: Confirmed no existing PR closes this issue and the branch does not already exist
 - [ ] **Paper summarized**: Using `/summarize-arxiv-paper` skill
 - [ ] **File created**: In `machine-learning/YYYY/<filename>.md`
 - [ ] **PR created**: With `Closes #<issue_number>` in body
@@ -344,6 +398,7 @@ echo "🔗 URL: $ARXIV_URL"
 
 **Graceful exit conditions:**
 - No open issues with arXiv papers: Exit with success (nothing to do)
+- All candidate issues already have PRs or branches: Exit with success (nothing to do)
 - All 3 retry attempts found non-paper issues: Exit with message
 
 **What constitutes failure:**
