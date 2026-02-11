@@ -43,7 +43,7 @@ Before fetching any data, review `.github/prompts/compliance-notes.md` to unders
 2. Implement rate limiting:
    - Hacker News API: 1 second between requests
    - Reddit JSON API: 1 second between requests (max 60/minute)
-   - Hatena Bookmark: 2 seconds between requests
+   - Hatena Bookmark: 5 seconds between requests (per robots.txt Crawl-delay)
 3. Use proper User-Agent headers as specified in compliance-notes.md
 
 **If any source is blocked or rate-limited**: Skip it gracefully and note in the output.

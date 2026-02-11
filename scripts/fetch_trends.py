@@ -146,7 +146,7 @@ def fetch_hatena():
     ]
 
     for url, category in categories:
-        time.sleep(2)  # 2-second delay for Hatena
+        time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
         print(f"  → Fetching {url}...", flush=True)
 
         xml_content = fetch_text(url, HATENA_UA)

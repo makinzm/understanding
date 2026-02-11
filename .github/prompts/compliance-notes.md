@@ -1,6 +1,6 @@
-# ToS Compliance Notes for Daily Trends Workflow
+# ToS Compliance Notes for Automated Workflows
 
-This document archives the terms of service compliance requirements for all sources used in the daily trends collection workflow.
+This document archives the terms of service compliance requirements for all sources used in the daily trends collection and auto-summarize-papers workflows.
 
 ## Hacker News
 
@@ -38,7 +38,7 @@ This document archives the terms of service compliance requirements for all sour
 - **Privacy Policy**: https://policies.hatena.ne.jp/privacy (Japanese)
 - **URL Pattern**: `https://b.hatena.ne.jp/hotentry/[category]`
 - **Alternative (RSS)**: `https://b.hatena.ne.jp/hotentry/[category].rss`
-- **Rate Limits**: None specified, implement 2-second delays (conservative)
+- **Rate Limits**: `Crawl-delay: 5` specified in robots.txt — implement 5-second delays minimum
 - **User-Agent**: `Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)`
 - **robots.txt**: https://b.hatena.ne.jp/robots.txt
 - **Last Checked**: 2026-02-08
@@ -47,6 +47,23 @@ This document archives the terms of service compliance requirements for all sour
   - Only accessing public bookmark pages (no login required)
   - Using WebFetch tool which respects standard web etiquette
   - If blocked or rate-limited, skip this source
+
+## arXiv (auto-summarize-papers workflow)
+
+**Access**: Paper content fetched via ar5iv (HTML mirror), not arxiv.org directly
+- **Status**: ✅ ar5iv is very permissive; arxiv.org direct access not needed
+- **Official Site**: https://arxiv.org/
+- **Terms of Service**: https://arxiv.org/help/policies/terms_of_use
+- **arxiv.org robots.txt**: https://arxiv.org/robots.txt
+  - `Crawl-delay: 15` for `User-agent: *`
+  - Allows: `/abs`, `/pdf`, `/html`, `/archive`, `/list`, `/year`, `/catchup`
+  - **Do NOT scrape arxiv.org directly** — use ar5iv instead
+- **ar5iv robots.txt**: https://ar5iv.labs.arxiv.org/robots.txt
+  - Only disallows `/log/` — all paper HTML paths are allowed
+- **Last Checked**: 2026-02-11
+- **Notes**:
+  - The `summarize-arxiv-paper` skill fetches `https://ar5iv.labs.arxiv.org/html/<ID>`, which is fully allowed
+  - Never fetch `https://arxiv.org/pdf/` or bulk-scrape arxiv.org
 
 ## General Compliance Principles
 
@@ -65,3 +82,4 @@ This document archives the terms of service compliance requirements for all sour
 ## Revision History
 
 - 2026-02-08: Initial documentation
+- 2026-02-11: Fix Hatena crawl-delay from 2s to 5s (per robots.txt); add arXiv/ar5iv compliance section
