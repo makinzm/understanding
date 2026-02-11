@@ -51,9 +51,11 @@ For each cluster, an LLM receives `{shop_metadata, cluster_id, aggregated_produc
 
 #### Stage 3: Buyer Intent Generation
 
-Purchase-intent ratio is calibrated to the cluster's observed add-to-cart rate $\bar{a}$:
+Purchase-intent ratio is calibrated to the cluster's observed add-to-cart rate $a^-$
 
-$$\text{purchase\_count} = \text{clip}(\text{round}(\bar{a} \cdot n),\; 1,\; n-1)$$
+```math
+\text{purchase\_count} = \text{clip}(\text{round}(\bar{a} \cdot n),\; 1,\; n-1)
+```
 
 where $n$ is the total number of agents for this cluster and $\text{clip}(\cdot, 1, n-1)$ ensures at least one purchaser and one browser. Each agent receives a two-sentence intent:
 
@@ -108,6 +110,9 @@ IntentPersonaPipeline(sessions, shop, n):
 #### Web Perception
 
 Agents perceive pages as **accessibility trees**—hierarchical representations of interactive elements with reference IDs mapped to DOM locations. This avoids screenshot-based perception, which requires vision models, and instead provides an unambiguous symbolic interface for action targeting.
+
+> [!NOTE]
+> この論文をまとめていての個人的な感想でしかないが、AOMは情報は含まれているものの、人間が確認できる情報と乖離があるためLLMが正確に理解できるかは不明だと感じた。
 
 #### Perceive-Plan-Act Loop
 
