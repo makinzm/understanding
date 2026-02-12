@@ -87,6 +87,8 @@ The total error decomposes (via triangle inequality) into three parts:
 
 ## Coverage Assumption (Theorem 3.8)
 
+> p,qはそれぞれd_sとj_tの分布です
+
 Under the assumption that the density ratio $r^* = \sup_\mathbf{x} P(\mathbf{x})/Q(\mathbf{x})$ is bounded, the target service contains approximately $|J_T|/r^*$ effective samples from the source distribution, which bounds the combinatorial optimum.
 
 ## Model Generalization (Corollary 3.10)
