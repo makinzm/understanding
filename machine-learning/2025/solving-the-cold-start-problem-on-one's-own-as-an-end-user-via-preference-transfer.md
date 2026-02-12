@@ -65,6 +65,9 @@ $$\text{MMD}(\mu, \nu)^2 = \mathbb{E}_{\mathbf{x},\mathbf{x}' \sim \mu}[k(\mathb
 
 where $k$ is a positive definite kernel (e.g., RBF). This is differentiable in the weights and admits efficient gradient computation.
 
+> [NOTE]
+> 元々はMMDの定義は正定値カーネルkによって定められる、再生核ヒルベルト空間の距離が1以下の箇所についての上限を考えている
+
 ## Wasserstein Distance ($W_1$)
 
 $$W_1(\mu^w, \nu) = \inf_{\gamma \in \Pi(\mu^w, \nu)} \sum_{j,j'} \gamma_{jj'} \|\mathbf{x}_j - \mathbf{x}_{j'}\|$$
