@@ -34,24 +34,20 @@ Construct the labeled candidate set $J_T = \{(i, y) \mid i \in I_T, y \in \{0,1\
 **Stage 2 — Continuous Optimization (Frank-Wolfe):**
 Solve the relaxed (continuous weight) version:
 
-$$\min_{\mathbf{w} \in \mathbb{R}^{2m}} D\!\left(\sum_{j=1}^{2m} w_j \delta_{(\mathbf{x}_{i_j}, y_j)},\ \mu_S\right)$$
+$$\min_{\mathbf{w} \in \mathbb{R}^{2m}} D\left(\sum_{j=1}^{2m} w_j \delta_{(\mathbf{x}_{i_j}, y_j)},\ \mu_S\right)$$
 
 subject to $\sum_j w_j = 1$ and $0 \le w_j \le 1/K$.
 
 Use Frank-Wolfe with step size $\eta_t = 2/(t+2)$ for iterations $t = 0, 1, \ldots, L-1$.
 
-```
-Input: candidate set J_T, source distribution μ_S, budget K, steps L
-Initialize: w_0 = uniform over J_T
-For t = 0 to L-1:
-    Compute gradient ∇D(w_t) w.r.t. each w_j
-    Find j* = argmin_j [∇D(w_t)]_j   (linear minimization oracle)
-    Set s_t = e_{j*} / K              (sparse update step)
-    Update w_{t+1} = w_t + (2/(t+2)) * (s_t - w_t)
-Return w_L
-```
 
 Convergence rate is $O(L^{-1})$.
+
+> [NOTE]
+> フランク・ウルフのアルゴリズムの適応方法の具体は元論文を参考にすること。また、収束率が繰り返し数の逆数になるのは、このアルゴリズムの性質である。
+>
+> https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%AF%E3%83%BB%E3%82%A6%E3%83%AB%E3%83%95%E3%81%AE%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0
+
 
 **Stage 3 — Randomized Rounding:**
 Sample each candidate independently: $I_j \sim \text{Bernoulli}(K \cdot w_j)$. Set $\hat{D}_T = \{(i_j, y_j) \mid I_j = 1\}$.
