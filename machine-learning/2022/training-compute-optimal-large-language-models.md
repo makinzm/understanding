@@ -11,6 +11,9 @@
 
 This paper (commonly known as the "Chinchilla" paper) challenges the prevailing assumption that larger models always lead to better performance, given a fixed compute budget. Prior work by Kaplan et al. (2020) suggested that model size should scale faster than training data when compute is increased. The authors of this paper empirically demonstrate that **model size and training tokens should be scaled equally**, meaning that a 10× increase in compute should yield approximately 3.16× more parameters *and* 3.16× more training tokens.
 
+> [!NOTE]
+> 3.16 is calculated from $\sqrt{10}$
+
 The core implication is that many large language models (e.g., Gopher at 280B parameters trained on 300B tokens) are "significantly undertrained" relative to their compute budget, and a smaller model trained on substantially more data would outperform them.
 
 > [!NOTE]
