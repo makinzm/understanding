@@ -88,6 +88,9 @@ $$\frac{D_{\text{opt}}}{N_{\text{opt}}} \approx 20 \text{ tokens/parameter}$$
 
 This means: for every 1 billion parameters, a compute-optimal model should be trained on approximately **20 billion tokens**.
 
+> [!NOTE]
+> 20 appears from Table3. In this paper, there is no explanation about optimal rules but you can calculate number of parameters / number of tokens.
+
 # 3. Chinchilla: Validation of the Scaling Law
 
 ## 3.1 Model Design
