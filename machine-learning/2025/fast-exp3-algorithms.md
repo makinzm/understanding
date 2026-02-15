@@ -29,9 +29,12 @@ At each round $t = 1, \ldots, T$:
 
 $$\bar{R}_T := \mathbb{E}\left[\sum_{t=1}^T \ell_{t,a_t}\right] - \min_{i \in [K]} \sum_{t=1}^T \ell_{t,i}$$
 
+> [!NOTE]
+> $\bar{R}_T$ is equal or larger than 0, and the goal is to design algorithms that achieve $\bar{R}_T = O(\sqrt{KT \ln K})$ with a small leading constant.
+
 ### Standard EXP3
 
-EXP3 maintains a weight vector $\mathbf{w}_t \in \mathbb{R}_{>0}^K$ initialized to $w_{1,i} = 1$ for all $i$.
+EXP3 maintains a weight vector $w_t \in \mathbb{R}_{>0}^K$ initialized to $w_{1,i} = 1$ for all $i$.
 
 **Sampling distribution:**
 
