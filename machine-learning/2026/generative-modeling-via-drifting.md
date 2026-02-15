@@ -21,11 +21,16 @@ This paper introduces **Drifting Models**, a generative modeling paradigm that r
 | Term | Definition |
 |------|------------|
 | $p$ | Target data distribution |
-| $q_\theta$ | Generator-induced distribution: $q_\theta = f_\theta \# p_\varepsilon$ where $p_\varepsilon = \mathcal{N}(0, I)$ |
+| $q_\theta$ | Generator-induced distribution: $q_\theta = f_\theta ♯ p_\varepsilon$ where $p_\varepsilon = \mathcal{N}(0, I)$ |
 | $f_\theta$ | Neural generator mapping noise $\varepsilon \in \mathbb{R}^D$ to samples $x \in \mathbb{R}^D$ |
 | $\varepsilon$ | Gaussian noise input, $\varepsilon \sim \mathcal{N}(0, I)$ |
 
 **Goal**: Find $\theta^*$ such that $q_{\theta^*} = p$.
+
+> [!NOTE]
+> ♯ operator denotes pushforward: $f_\theta ♯ p_\varepsilon$ is the distribution of $f_\theta(\varepsilon)$ when $\varepsilon \sim p_\varepsilon$.  
+>
+> i.e. $f_\theta ♯ p_\varepsilon(A) = p_\varepsilon(f_\theta^{-1}(A))$ for any measurable set $A$.
 
 ---
 
@@ -53,6 +58,9 @@ The kernel function is an exponential distance kernel with temperature $\tau$:
 
 $$k(\mathbf{x}, \mathbf{y}) = \exp\!\left(-\frac{\|\mathbf{x} - \mathbf{y}\|}{\tau}\right)$$
 
+> [!NOTE]
+> $y^+$ and $y^-$ are positive (real) and negative (generated) samples, respectively. The kernel weights ensure that closer samples have a stronger influence on the drifting field.
+
 ### Anti-Symmetry Property
 
 > [!IMPORTANT]
@@ -70,7 +78,7 @@ $$\mathbf{V}_{p,q}(\mathbf{x}) = \frac{1}{Z_p Z_q}\mathbb{E}_{p,q}\bigl[k(\mathb
 
 The generator is trained to regress toward the drifted version of its own output. Using a stop-gradient on the target to avoid degenerate solutions:
 
-$$\mathcal{L}(\theta) = \mathbb{E}_\varepsilon\bigl[\|f_\theta(\varepsilon) - \mathrm{sg}\bigl(f_\theta(\varepsilon) + \mathbf{V}_{p,\,q_\theta}(f_\theta(\varepsilon))\bigr)\|^2\bigr]$$
+$$\mathcal{L}(\theta) = \mathbb{E}_\varepsilon\bigl[\|f_\theta(\varepsilon) - \mathrm{stopgrad}\bigl(f_\theta(\varepsilon) + \mathbf{V}_{p,\,q_\theta}(f_\theta(\varepsilon))\bigr)\|^2\bigr]$$
 
 Because the stop-gradient freezes the target, the loss equals $\mathbb{E}[\|\mathbf{V}\|^2]$ when differentiated through $f_\theta$, meaning the generator is penalized for producing samples that are far from the drifted position.
 
@@ -78,7 +86,7 @@ Because the stop-gradient freezes the target, the loss equals $\mathbb{E}[\|\mat
 
 Direct pixel-space drifting degrades quality. Instead, a pre-trained feature extractor $\phi: \mathbb{R}^D \to \mathbb{R}^F$ maps samples to a feature space where the drifting field is computed:
 
-$$\mathcal{L}_\phi(\theta) = \mathbb{E}_\varepsilon\bigl[\|\phi(f_\theta(\varepsilon)) - \mathrm{sg}\bigl(\phi(f_\theta(\varepsilon)) + \mathbf{V}_{p,q_\theta}(\phi(f_\theta(\varepsilon)))\bigr)\|^2\bigr]$$
+$$\mathcal{L}_\phi(\theta) = \mathbb{E}_\varepsilon\bigl[\|\phi(f_\theta(\varepsilon)) - \mathrm{stopgrad}\bigl(\phi(f_\theta(\varepsilon)) + \mathbf{V}_{p,q_\theta}(\phi(f_\theta(\varepsilon)))\bigr)\|^2\bigr]$$
 
 Multi-scale features from multiple ResNet stages are concatenated to capture both local and global structure.
 
