@@ -3,6 +3,7 @@
 - URL: [Robust Speech Recognition via Large-Scale Weak Supervision](https://arxiv.org/abs/2212.04356)
 - LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
 - Reference: Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust Speech Recognition via Large-Scale Weak Supervision. ICML 2023.
+- code https://github.com/openai/whisper
 
 # Robust Speech Recognition via Large-Scale Weak Supervision (Whisper)
 
