@@ -6,6 +6,9 @@
 
 # Self-Improving Pretraining
 
+> [!NOTE]
+> この論文は従来のRLHFの苦労を自動化させるために、教師となるモデルを用いて、pretrainingの段階から品質や安全性を向上させる方法を提案しています。従来のpretrainingは単純な次トークン予測に基づいていますが、SIPはRLをpretrainingに組み込むことで、モデルが生成するテキストの品質や安全性を直接最適化します。これにより、post-trainingの段階での大幅な改善なしに、より高品質で安全なモデルをpretrainingから得ることができます。これによりRLHFのコストや複雑さを削減し、より効率的なモデル開発が可能になります。
+
 ## Overview
 
 Self-Improving Pretraining (SIP) is a method that augments standard language model pretraining with reinforcement learning, using a strong post-trained model as a judge and rewriter. Rather than training only on static next-token prediction, SIP treats each prefix–suffix pair as a decision problem: the policy model generates candidate suffixes, the judge scores them, and the highest-scoring candidate supervises the update. This enables the pretraining phase itself to optimize for quality, safety, and factuality — properties that standard pretraining on raw corpora cannot directly target.
@@ -26,7 +29,7 @@ Standard LLM pretraining minimizes cross-entropy loss over token sequences from 
 Standard next-token prediction is reformulated as **prefix-conditioned suffix generation**. Given a document tokenized into positions $1, \ldots, T$, training is divided into steps indexed by $j$. At each step:
 
 - **Prefix**: $x_{1}, x_{2}, \ldots, x_{j-1}$ (all tokens before position $j$)
-- **Suffix**: $x_j$ — a contiguous block of $N = 128$ tokens starting at position $j$
+- **Suffix**: $x_j$:  a contiguous block of $N = 128$ tokens starting at position $j$
 
 The policy model $\pi$ generates a suffix candidate:
 $$\bar{x}_j \sim \pi(\cdot \mid x_{1}, \ldots, x_{j-1})$$
@@ -37,11 +40,11 @@ where $\bar{x}_j \in \mathbb{R}^{N}$ is a sequence of $N$ discrete token ids. Th
 
 Three components are combined to implement SIP:
 
-#### Suffix Rewriter
+#### A: Suffix Rewriter
 
 A post-trained model rewrites the original suffix $x_j$ into an improved version $\tilde{x}_j$ that maintains coherence with the prefix while improving quality, safety, or factuality. The rewriter is trained on supervised pairs (original suffix → improved suffix) and is frozen during policy training.
 
-#### Suffix Judge
+#### B: Suffix Judge
 
 The judge $J$ is a fine-tuned or prompted model that evaluates any candidate suffix for:
 - **Quality** $J_{\text{qual}}(\bar{x}_j, x_j \mid x_{1,\ldots,j-1})$: pairwise comparison between candidate and original
@@ -54,7 +57,10 @@ $$R_{\text{safe}} = \begin{cases} 1.0 & \text{if } \bar{x}_j = x_j \text{ (origi
 For rewrites of unsafe suffixes:
 $$R_{\text{unsafe}} = \frac{1}{2}\bigl(J_{\text{qual}}(\bar{x}_j, x_j \mid x_{1,\ldots,j-1}) + J_{\text{safe}}(\bar{x}_j)\bigr)$$
 
-#### Policy Training
+> [!NOTE]
+> The $R$ is used when selecting the positive example for DPO training. The policy is rewarded for generating suffixes that outperform the original according to the judge, and for maintaining safety when the original is safe.
+
+#### C: Policy Training
 
 The policy model $\pi$ is trained using **online DPO** (Direct Preference Optimization) with the judge's scores as rewards. At each training step, $K$ rollouts are sampled from $\pi$ alongside the original and rewritten suffixes. All candidates are scored by the judge, and the highest-scoring candidate is used as the positive example.
 
