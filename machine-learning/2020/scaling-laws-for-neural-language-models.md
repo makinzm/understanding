@@ -157,3 +157,6 @@ At $L \approx 1.7$ nats/token, the model may be approaching the entropy of natur
 - **Regularization:** 10% dropout.
 - **Hardware:** Not explicitly stated; compute measured in PF-days (petaflop-days, $\approx 10^{20}$ FLOPs).
 - **Key result:** A $1.5 \times 10^9$ parameter model trained with $\sim 10^3$ PF-days of compute achieves test loss of approximately 3.0 nats/token on WebText2. Doubling compute (via model size alone) reduces loss by approximately $2^{0.05} \approx 3.5\%$ relative.
+
+> [!IMPORTANT]
+> These scaling laws were later revised by Hoffmann et al. (2022) in the Chinchilla paper (arXiv:2203.15556), which found that the optimal allocation is **equal** scaling of model parameters and training tokens ($N \propto C^{0.5}$, $D \propto C^{0.5}$), rather than the heavily model-size-biased allocation ($N \propto C^{0.73}$) suggested here. The discrepancy arises because this paper used fixed training budgets and did not explore training smaller models for much longer.
