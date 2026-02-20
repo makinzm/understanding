@@ -1,7 +1,6 @@
 # Reference
 
 - [足立　修一, 丸田　一郎, 「カルマンフィルタの基礎」 - 東京電機大学出版局 2012 ]( https://www.tdupress.jp/book/b349390.html )
-- [ Some System Identification Challenges and Approaches - ScienceDirect ]( https://www.sciencedirect.com/science/article/pii/S1474667016386153 )
 
 ---
 
