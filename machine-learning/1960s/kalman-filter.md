@@ -41,6 +41,27 @@ There are three types of state estimation problems of time $k$:
 
 ## System modeling
 
+Control Problem is separated into three steps:
+
+1. Modeling: Find a system from input and output.
+2. Analysis: Analyze the output from the system and input.
+3. Design: Find an input from the system and output.
+
+- Transformation: Fourier transform, Laplace transform, Z-transform, etc.
+- Function: Correlation function, Spectral density function, Whiteness, Normality, etc.
+- Sampling: Quantization etc.
+
+There is two type of system modeling:
+1. Model Based Control: Modern Control, Robust Control, Model Predictive Control, etc.
+2. Model Free Control: Fuzzy Control, Neuro Control, etc.
+
+(Classical Control is PID control.)
+
+There is three types of creating a mathematical model of a system:
+1. First principle modeling: Create a mathematical model based on physical laws and principles.
+2. System identification: Create a mathematical model based on input-output data.
+3. Grey box modeling: Create a mathematical model based on both physical laws and input-output data.
+
 # Kalman filter
 
 ## Linear Kalman filter
