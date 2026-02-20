@@ -29,3 +29,16 @@ There are three types of state estimation problems of time $k$:
 2. Filtering: Used data range is $[0, k]$
 3. Smoothing: Used data range is $[0, k+n]$
 
+# Modeling
+
+## Time-series modeling
+
+## System modeling
+
+# Kalman filter
+
+## Linear Kalman filter
+
+## Non-linear Kalman filter
+
+# Application
