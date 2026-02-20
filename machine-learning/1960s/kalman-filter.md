@@ -66,6 +66,44 @@ There is three types of creating a mathematical model of a system:
 
 ## Linear Kalman filter
 
+Based on orthogonal projection theorem, we can find the optimal estimator of the state from the signal.
+
+There is a stationaly linear Kalman filter, which is a special case of the linear Kalman filter. In this case, the system is time-invariant and the noise is white Gaussian noise:
+
+1. Initialization: 
+    - Let $x_0$ be generated from a Gaussian distribution with mean $\mu_0$ and covariance $\Sigma_0 \in\mathbb{R}^{n\times n}$.
+    - Let $P_{0|0} = \Sigma_0$ and $\hat{x}_{0|0} = \mu_0$ mean of the state estimation at time $0$.
+    - Let $y_k \in\mathbb{R}^p$ be the observation at time $k$.
+    - Let system noise and observation noise be generated from Gaussian distributions with mean $0$ and covariance $Q\in\mathbb{R}^{r\times r}$ and $R\in\mathbb{R}^{p\times p}$, respectively.
+    - Let $A\in\mathbb{R}^{n\times n}$, $B\in\mathbb{R}^{n\times r}$, and $C\in\mathbb{R}^{p\times n}$ be the state transition matrix, control input matrix, and observation matrix, respectively.
+    - $n$ means the dimension of the state, $r$ means the dimension of the control input, and $p$ means the dimension of the observation.
+2. Update for $k\in{1, 2, \ldots}$:
+    - Prediction step: 
+        - $\hat{x}_{k|k-1} = A\hat{x}_{k-1|k-1}$
+        - $P_{k|k-1} = AP_{k-1|k-1}A^T + BQ B^T$
+    - Update step:
+        - $K_k = P_{k|k-1}C^T(CP_{k|k-1}C^T + R)^{-1}$ is the Kalman gain.
+        - $\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k(y_k - C\hat{x}_{k|k-1})$
+        - $P_{k|k} = (I - K_kC)P_{k|k-1}$
+
+If $(A, B)$ is controllable and $(A, C)$ is observable, then the estimation error covariance $P_{k|k}$ converges to a unique positive semi-definite matrix $P$ as $k\to\infty$, which is the solution of the algebraic Riccati equation:
+
+- Controllability: A pair of matrices $(A, B)$ is controllable if the controllability matrix $[B, AB, A^2B, \ldots, A^{n-1}B]$ has full rank $n$.
+- Observability: A pair of matrices $(A, C)$ is observable if the observability matrix $\begin{bmatrix} C \\ CA \\ CA^2 \\ \vdots \\ CA^{n-1} \end{bmatrix}$ has full rank $n$.
+
+---
+
+There is a non-stationary linear Kalman filter, which is a general case of the linear Kalman filter. In this case, the system is time-varying and the noise is white Gaussian noise:
+
+1. Update for $k\in{1, 2, \ldots}$:
+    - Prediction step: 
+        - $\hat{x}_{k|k-1} = A_k\hat{x}_{k-1|k-1}$
+        - $P_{k|k-1} = A_kP_{k-1|k-1}A_k^T + B_kQ_k B_k^T$
+    - Update step:
+        - $K_k = P_{k|k-1}C_k^T(C_kP_{k|k-1}C_k^T + R_k)^{-1}$ is the Kalman gain.
+        - $\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k(y_k - C_k\hat{x}_{k|k-1})$
+        - $P_{k|k} = (I - K_kC_k)P_{k|k-1}$
+
 ## Non-linear Kalman filter
 
 # Application
