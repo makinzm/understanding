@@ -106,4 +106,7 @@ There is a non-stationary linear Kalman filter, which is a general case of the l
 
 ## Non-linear Kalman filter
 
+1. [ Extended Kalman filter - Wikipedia ]( https://en.wikipedia.org/wiki/Extended_Kalman_filter )
+2. UKF: Unscented Kalman filter - [ Kalman filter # Unscented_Kalman_filter - Wikipedia ]( https://en.wikipedia.org/wiki/Kalman_filter#Unscented_Kalman_filter )
+
 # Application
