@@ -33,6 +33,12 @@ There are three types of state estimation problems of time $k$:
 
 ## Time-series modeling
 
+- Model: AR / MA / ARMA / ARIMA models
+- Problem: Can this noise be represented as a filtered white noise?
+    - → Spectral factorization problem: Find a causal, stable filter $H(z)$ such that $S(\omega) = H(e^{j\omega})H^*(e^{j\omega})$ where $S(\omega)$ is the power spectral density of the noise.
+    - This is solved by Spectral Decomposition Theorem: [ Spectral theorem - Wikipedia ]( https://en.wikipedia.org/wiki/Spectral_theorem )
+- How to realize model: Least squares method, Levinson-Durbin algorithm, etc.
+
 ## System modeling
 
 # Kalman filter
