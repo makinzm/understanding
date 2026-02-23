@@ -1,7 +1,7 @@
 # Meta Information
 
 - URL: [PaCoRe: Learning to Scale Test-Time Compute with Parallel Coordinated Reasoning](https://arxiv.org/abs/2601.05593)
-- LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
+- LICENSE: [ Deed - Attribution 4.0 International - Creative Commons ]( https://creativecommons.org/licenses/by/4.0/ )
 - Reference: Hu, J., Zhang, Y., Yang, X., et al. (2025). PaCoRe: Learning to Scale Test-Time Compute with Parallel Coordinated Reasoning. StepFun, Tsinghua University, Peking University.
 
 # PaCoRe: Learning to Scale Test-Time Compute with Parallel Coordinated Reasoning
