@@ -104,7 +104,7 @@ def fetch_reddit():
             print(f"  → Fetching r/{sub}...", flush=True)
 
             data = fetch_json(
-                f"https://www.reddit.com/r/{sub}/hot.json?limit=25", REDDIT_UA
+                f"https://old.reddit.com/r/{sub}/hot.json?limit=25", REDDIT_UA
             )
             if not data or "data" not in data:
                 continue
@@ -140,9 +140,7 @@ def fetch_hatena():
     bookmarks = []
 
     categories = [
-        ("https://b.hatena.ne.jp/hotentry/it.rss", "Tech"),
-        ("https://b.hatena.ne.jp/hotentry/technology.rss", "Tech"),
-        ("https://b.hatena.ne.jp/hotentry/all.rss", "General"),
+        ("https://b.hatena.ne.jp/hotentry/it", "Tech"),
     ]
 
     for url, category in categories:
