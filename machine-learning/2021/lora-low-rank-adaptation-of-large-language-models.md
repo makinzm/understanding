@@ -50,6 +50,11 @@ Adapter layers insert small bottleneck MLP modules (e.g., $d_{\text{model}} \to 
 
 Under model parallelism, adapter layers require additional synchronous GPU operations (AllReduce, Broadcast), amplifying latency further.
 
+> [!NOTE]
+> AdapterH is, defined 5.1 Chapter, adding two adapter layers per Transformer layer, which one is before and one is after the attention/MLP, which H may mean Houlsby, who is this architect of the adapter.
+>
+> AdapterL is, defined 5.1 Chapter, a single adapter layer after Transformer, which L may mean Lin, who is this architect of the adapter.
+
 ### Prefix Tuning Has Non-Monotonic Scaling
 
 Prefix tuning prepends learnable tokens to the input sequence. However, it non-monotonically responds to increasing the number of prefix tokens, and the reserved prefix positions reduce the effective sequence length available for downstream task content.
@@ -83,7 +88,7 @@ This ensures $\Delta W = BA = 0$ at the start of training, so LoRA starts from t
 
 ### Scaling
 
-The update is scaled by $\frac{\alpha}{r}$ before addition:
+The update is scaled by $\frac{\alpha}{r}$ before addition, $x$ is the input to the linear layer, and $h$ is the output:
 
 $$h = W_0 x + \frac{\alpha}{r} B A x$$
 
