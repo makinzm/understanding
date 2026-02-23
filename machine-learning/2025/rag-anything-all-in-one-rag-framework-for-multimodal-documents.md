@@ -27,6 +27,9 @@ where $t_j \in \{\text{text}, \text{image}, \text{table}, \text{equation}, \ldot
 - $d_j^{\text{chunk}}$: a detailed description optimized for chunk-level retrieval
 - $e_j^{\text{entity}}$: an entity summary containing name, type, and description
 
+> [!NOTE]
+> Examples of $d_j^{\text{chunk}}$ is a caption-like description for an image, while $e_j^{\text{entity}}$ is a concise entity name and type (e.g., "Figure 3: Bar chart showing sales by region"). These representations enable the system to treat non-textual content as first-class citizens in both graph construction and retrieval.
+
 ## Architecture
 
 The system has three stages: Indexing, Retrieval, and Synthesis.
@@ -38,6 +41,11 @@ The system has three stages: Indexing, Retrieval, and Synthesis.
 For each non-text unit $c_j$, a vision-language model generates $d_j^{\text{chunk}}$ and $e_j^{\text{entity}}$. Then a graph extraction routine $R(\cdot)$ produces entities and relations:
 
 $$(\mathcal{V}_j, \mathcal{E}_j) = R(d_j^{\text{chunk}})$$
+
+$\mathcal{V}$ means the set of entities and $\mathcal{E}$ means the set of relations.
+
+> [!NOTE]
+> The example of $R(\cdot)$ could be a combination of object detection for images, table structure parsing for tables, and equation component extraction for mathematical expressions. The resulting graph captures the internal structure of the non-textual content.
 
 Each non-text unit also becomes a multimodal entity node $v_j^{\text{mm}}$ (identified by $e_j^{\text{entity}}$). The merged multimodal graph is:
 
