@@ -31,6 +31,30 @@ A personal knowledge repository documenting understanding of topics in computer 
 - Include source links, references, and license/copyright info at top
 - Use hierarchical headings with clear sections
 
+### Math Notation
+
+- **Inline math**: Use `$...$` for math within a sentence (e.g., `$x \in \mathbb{R}^{d}$`)
+- **Block math**: Use a fenced code block with the `math` language tag for any display equation, even single-line. Do NOT use `$$...$$` as it causes rendering issues.
+  - Single-line: use `\begin{align}...\end{align}` with one equation
+  - Multi-line: use `\begin{align}...\end{align}` with `\\` line breaks
+
+  ````markdown
+  ```math
+  \begin{align}
+    y = Wx + b
+  \end{align}
+  ```
+  ````
+
+  ````markdown
+  ```math
+  \begin{align}
+    y &= Wx + b \\
+    \hat{y} &= \sigma(y)
+  \end{align}
+  ```
+  ````
+
 ### Definition of Done (Quality Checklist)
 
 All documents must:

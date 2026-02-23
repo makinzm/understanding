@@ -72,6 +72,7 @@ Follow these rules strictly when writing the summary. These come from the Defini
 - Define all mathematical variables before using them, with explicit dimensions
 - Use tables for terminologies, comparisons, and experimental results
 - Content can be written in English or Japanese, matching the paper's language or user preference
+- **Math notation**: Use `$...$` for inline math. For block equations (even single-line), use a `math` fenced code block with `\begin{align}...\end{align}` — do NOT use `$$...$$`.
 
 ## Don'ts
 
