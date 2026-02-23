@@ -65,7 +65,7 @@ Follow these rules strictly when writing the summary. These come from the Defini
 ### Content-Specific Rules
 - If the article contains algorithms or technical mechanisms, describe them with pseudocode or step-by-step explanation
 - If the article contains evaluations or experiments, summarize key quantitative results
-- If the article contains mathematical notation, use LaTeX/MathJax ($...$) and define variables before use
+- If the article contains mathematical notation, use `$...$` for inline math and define variables before use. For block equations (even single-line), use a `math` fenced code block with `\begin{align}...\end{align}` — do NOT use `$$...$$`.
 - Compare with related or alternative approaches, highlighting what is new or different
 - Use tables for terminology definitions, comparisons, and result summaries
 
