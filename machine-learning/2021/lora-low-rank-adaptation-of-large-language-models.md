@@ -18,13 +18,21 @@ LoRA (Low-Rank Adaptation) is a parameter-efficient fine-tuning method for large
 
 Given a pre-trained autoregressive language model $P_{\Phi}(y \mid x)$ parameterized by $\Phi$, standard full fine-tuning maximizes:
 
-$$\max_{\Phi} \sum_{(x,y) \in \mathcal{Z}} \sum_{t=1}^{|y|} \log\left(P_{\Phi}(y_t \mid x, y_{<t})\right)$$
+```math
+\begin{align}
+\max_{\Phi} \sum_{(x,y) \in \mathcal{Z}} \sum_{t=1}^{|y|} \log\left(P_{\Phi}(y_t \mid x, y_{<t})\right)
+\end{align}
+```
 
 where $\mathcal{Z} = \{(x_i, y_i)\}_{i=1,\ldots,N}$ is the downstream task dataset. For GPT-3 with $|\Phi| \approx 175$ billion parameters, storing a separate fine-tuned copy per task requires roughly 350 GB per checkpoint, making multi-task deployment impractical.
 
 LoRA instead encodes the task-specific increment $\Delta\Phi = \Delta\Phi(\Theta)$ via a much smaller parameter set $\Theta$ with $|\Theta| \ll |\Phi|$, optimizing:
 
-$$\max_{\Theta} \sum_{(x,y) \in \mathcal{Z}} \sum_{t=1}^{|y|} \log\left(P_{\Phi_0 + \Delta\Phi(\Theta)}(y_t \mid x, y_{<t})\right)$$
+```math
+\begin{align}
+\max_{\Theta} \sum_{(x,y) \in \mathcal{Z}} \sum_{t=1}^{|y|} \log\left(P_{\Phi_0 + \Delta\Phi(\Theta)}(y_t \mid x, y_{<t})\right)
+\end{align}
+```
 
 For GPT-3 175B, $|\Theta|$ can be as small as 0.01% of $|\Phi_0|$.
 
