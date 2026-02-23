@@ -36,10 +36,11 @@ Do not stop until you have executed `gh pr create` successfully.
 
 ## Overview
 
-Create a curated daily trends report with weighted focus:
-- **60% AI**: AI agents, frameworks, LLMs, autonomous systems, AI tooling
-- **30% Tech**: Software development, developer tools, programming, engineering
-- **10% Others**: World news, Japan news, general interest
+Create a curated daily trends report with two sections:
+- **Pick Up**: A short hand-curated selection of the most interesting/relevant items, with a personal reason for recommending each. Prioritize ML, AI, and security research given the owner's background.
+- **All**: The full list of fetched articles, organized by source.
+
+Sources covered: Hacker News, Reddit, Hatena Bookmark, Wiz Blog, arXiv cs.LG.
 
 **All content must come from real data fetched by the script.**
 
@@ -73,6 +74,8 @@ This script will:
 - Fetch Hacker News top stories (50+ points)
 - Fetch Reddit posts from AI/Tech/General subreddits (100+ upvotes or 50+ comments)
 - Fetch Hatena Bookmark hot entries from RSS feeds (10+ bookmarks)
+- Fetch Wiz Blog posts via RSS feed (no rate limit required)
+- Fetch arXiv cs.LG recent submissions (first 50 entries, 15 s crawl-delay)
 - Respect all rate limits and ToS requirements
 - Output structured JSON with all fetched articles
 
@@ -84,7 +87,7 @@ After running the script, verify the output:
    ```bash
    jq '.summary' /tmp/trends-data.json
    ```
-   Expected output: `{"hn_count": N, "reddit_count": M, "hatena_count": P, "total": X}`
+   Expected output: `{"hn_count": N, "reddit_count": M, "hatena_count": P, "wiz_count": Q, "arxiv_count": R, "total": X}`
 
 2. **Verify article counts**:
    - If total is 0: The fetch failed, check error messages
@@ -93,7 +96,7 @@ After running the script, verify the output:
 
 3. **Sample check URLs** (verify at least 3 URLs are real):
    ```bash
-   jq -r '.hacker_news[0].url, .reddit[0].url, .hatena[0].url' /tmp/trends-data.json | head -3
+   jq -r '.hacker_news[0].url, .reddit[0].url, .hatena[0].url, .wiz_blog[0].url, .arxiv_cslg[0].url' /tmp/trends-data.json | head -5
    ```
 
 **If the fetch script fails**: Document the failure in the report and DO NOT generate fake data. Create a report noting the technical issue.
@@ -111,32 +114,22 @@ jq '.' /tmp/trends-data.json
 The JSON structure:
 ```json
 {
-  "hacker_news": [{"title": "...", "url": "...", "score": N, "descendants": M, "source": "HackerNews"}],
-  "reddit": [{"title": "...", "url": "...", "ups": N, "num_comments": M, "category": "AI/Tech/General", "subreddit": "..."}],
-  "hatena": [{"title": "...", "url": "...", "bookmarks": N, "category": "Tech/General"}]
+  "hacker_news":  [{"title": "...", "url": "...", "score": N, "descendants": M, "source": "HackerNews"}],
+  "reddit":       [{"title": "...", "url": "...", "ups": N, "num_comments": M, "category": "AI/Tech/General", "subreddit": "..."}],
+  "hatena":       [{"title": "...", "url": "...", "bookmarks": N, "category": "Tech/General"}],
+  "wiz_blog":     [{"title": "...", "url": "...", "published": "...", "description": "...", "source": "WizBlog"}],
+  "arxiv_cslg":   [{"arxiv_id": "...", "title": "...", "url": "...", "subjects": "...", "source": "arXiv_csLG"}]
 }
 ```
 
-### Categorize and Rate Each Article
+### Select Pick Up Articles
 
-For each article in the JSON, assign a category and rating:
+Scan all articles and select **5–10 items** for the Pick Up section.
 
-**Categories**:
-- **🤖 AI (60% target)**: AI agents, LLMs, Claude/GPT, autonomous systems, AI frameworks, ML research
-- **💻 Tech (30% target)**: Dev tools, programming, frameworks, DevOps, architecture, performance
-- **🌍 World/Japan (10% target)**: World news, Japan news, tech policy, general interest
-
-**Ratings**:
-- **★★★ (High Priority)**: Direct match to category focus, high engagement, significant impact
-- **★★ (Medium Priority)**: Related but indirect, moderate engagement
-- **★ (Low Priority)**: Tangentially related, lower engagement
-
-**Rating criteria**:
-- Hacker News: 200+ points = ★★★, 100-199 = ★★, 50-99 = ★
-- Reddit: 500+ upvotes = ★★★, 200-499 = ★★, 100-199 = ★
-- Hatena: 50+ bookmarks = ★★★, 20-49 = ★★, 10-19 = ★
-
-**Distribution goal**: Aim for ~60% AI, ~30% Tech, ~10% Others in final selection.
+**Selection criteria** (owner is a software engineer specializing in ML):
+- Prioritize: ML research papers, LLM/agent advances, cloud security research (Wiz), new frameworks and tools
+- Also consider: high-engagement HN/Reddit posts on AI, notable Hatena Tech entries, arXiv papers with novel methods
+- Write a concrete `Why I recommend:` sentence for each pick — what makes it interesting or actionable
 
 ## Step 4: Generate Output
 
@@ -152,73 +145,77 @@ Example: For 2026-02-08, create `trends/2026/02/20260208-daily.md`
 
 **Format**:
 
-```markdown
+````markdown
 # Daily AI & Tech Trends - YYYY-MM-DD
 
-## 🤖 AI Highlights (60%)
+## Pick Up
 
-### Top Picks ★★★
+1. [Article Title](url)
+   - Why I recommend: [1–2 sentences — what makes this interesting or actionable for an ML engineer]
+2. [Article Title](url)
+   - Why I recommend:
+<!-- 5–10 items total -->
 
-- **[Article Title](url)** - [1-2 sentence summary]
-  - Source: [HN/Reddit/Hatena] | Engagement: [points/upvotes/bookmarks] | Comments: [count]
+## All
 
-### Notable ★★
+### Hacker News
 
-- **[Article Title](url)** - [Brief description]
-  - Source: [source] | Engagement: [metrics]
+| Title | Score | Comments |
+|-------|------:|---------:|
+| [Article Title](url) | 123 | 45 |
 
-## 💻 Tech Highlights (30%)
+### Reddit
 
-### Top Picks ★★★
+| Title | Subreddit | Upvotes | Comments |
+|-------|-----------|--------:|---------:|
+| [Article Title](permalink) | r/MachineLearning | 456 | 78 |
 
-- **[Article Title](url)** - [1-2 sentence summary]
-  - Source: [source] | Engagement: [metrics]
+### Hatena
 
-### Notable ★★
+| Title | Bookmarks |
+|-------|---------:|
+| [Article Title](url) | 34 |
 
-- **[Article Title](url)** - [Brief description]
-  - Source: [source] | Engagement: [metrics]
+### Wiz Blog
 
-## 🌍 World & Japan News (10%)
+| Title | Published |
+|-------|-----------|
+| [Article Title](url) | YYYY-MM-DD |
 
-### Top Picks ★★★
+### arXiv cs.LG
 
-- **[Article Title](url)** - [1-2 sentence summary]
-  - Source: [source] | Engagement: [metrics]
-
-### Notable ★★
-
-- **[Article Title](url)** - [Brief description]
-  - Source: [source] | Engagement: [metrics]
+| Title | arXiv ID |
+|-------|----------|
+| [Article Title](url) | 2602.XXXXX |
 
 ---
 
-## Collection Summary
+## Fetch Status
 
-- **Total Articles Analyzed**: [count]
-- **Sources Checked**:
-  - Hacker News: ✅ ([count] stories fetched at [timestamp])
-  - Reddit: ✅ ([count] subreddits, [count] posts)
-  - Hatena Bookmark: ✅ ([count] categories, [count] bookmarks)
-- **Compliance Status**: All rate limits respected, robots.txt followed
+| Source | Status | Count |
+|--------|--------|------:|
+| Hacker News | ✅ | N |
+| Reddit | ✅ | N |
+| Hatena | ✅ | N |
+| Wiz Blog | ✅ | N |
+| arXiv cs.LG | ✅ | N |
+| **Total** | | **N** |
 
-## Notes
-
-[Any issues encountered, sources skipped, or relevant observations]
-```
+<!-- Any issues encountered, sources skipped, or relevant observations -->
+````
 
 **Content guidelines**:
-- **Use ONLY URLs from /tmp/trends-data.json** - no fake or generated links
-- All URLs must be direct links to original articles (not intermediary pages)
-- Summaries should be concise and informative (1-2 sentences per article)
+- **Use ONLY URLs from /tmp/trends-data.json** — no fake or generated links
 - For Reddit discussions, use the `permalink` field from JSON
-- For Hatena, keep original Japanese titles with English translation in parentheses if needed
-- Include engagement metrics exactly as they appear in the JSON (don't round or estimate)
+- For Hatena, keep original Japanese titles (add English translation in parentheses if helpful)
+- Engagement metrics must match the JSON exactly (do not round or estimate)
+- arXiv: use `arxiv_id` field for the ID column, `url` for the link
+- Wiz Blog: use `published` field for the date column; strip time if present
 
 **Anti-Hallucination Checklist**:
 - [ ] Every article title comes from the JSON data (not invented)
 - [ ] Every URL is from the JSON data (verify no example.com, placeholder.com, or fake domains)
-- [ ] Article counts match JSON summary (HN count, Reddit count, Hatena count)
+- [ ] Article counts in Fetch Status match `jq '.summary' /tmp/trends-data.json`
 - [ ] No articles about "GPT-5", "Claude 4", or other non-existent products (unless actually in the data)
 - [ ] Engagement metrics match the JSON exactly (not estimated or inflated)
 
@@ -249,7 +246,7 @@ JSON_COUNT=$(jq '.summary.total' /tmp/trends-data.json 2>/dev/null || echo "0")
 echo "Report has $REPORT_COUNT articles, JSON has $JSON_COUNT articles"
 
 # 4. Verify real domains are present
-if ! grep -E "(news\.ycombinator\.com|reddit\.com|hatena\.ne\.jp|github\.com|arxiv\.org)" trends/YYYY/MM/YYYYMMDD-daily.md > /dev/null 2>&1; then
+if ! grep -E "(news\.ycombinator\.com|reddit\.com|hatena\.ne\.jp|github\.com|arxiv\.org|wiz\.io)" trends/YYYY/MM/YYYYMMDD-daily.md > /dev/null 2>&1; then
   echo "⚠️  WARNING: No real domains found"
   VALIDATION_PASSED=0
 fi
@@ -290,9 +287,9 @@ fi
    Add automated daily trends report for YYYY-MM-DD
 
    # Effect
-   - Collected [actual_count] real articles across AI ([ai_count]), Tech ([tech_count]), Others ([other_count])
+   - Collected [actual_count] real articles
    - Top finding: [brief mention of most interesting item from real data]
-   - Sources: Hacker News ([hn_count]), Reddit ([reddit_count]), Hatena ([hatena_count])
+   - Sources: Hacker News ([hn_count]), Reddit ([reddit_count]), Hatena ([hatena_count]), Wiz Blog ([wiz_count]), arXiv cs.LG ([arxiv_count])
 
    # Test
    - [x] Data fetched from real sources (not hallucinated)
@@ -353,8 +350,7 @@ fi
 
 **Replace placeholders in PR body** (in /tmp/pr-body.txt before creating):
 - `[actual_count]`: Total from `jq '.summary.total' /tmp/trends-data.json`
-- `[ai_count]`, `[tech_count]`, `[other_count]`: Actual distribution from your analysis
-- `[hn_count]`, `[reddit_count]`, `[hatena_count]`: From `jq '.summary' /tmp/trends-data.json`
+- `[hn_count]`, `[reddit_count]`, `[hatena_count]`, `[wiz_count]`, `[arxiv_count]`: From `jq '.summary' /tmp/trends-data.json`
 
 ## Error Handling
 
@@ -383,7 +379,7 @@ fi
 - [ ] **Compliance respected**: Rate limits followed (script handles this automatically)
 - [ ] **Format correct**: Markdown follows template exactly
 - [ ] **Metrics accurate**: Engagement numbers match JSON exactly (not rounded/estimated)
-- [ ] **Weighting approximate**: ~60% AI, ~30% Tech, ~10% Others (based on available data)
+- [ ] **Pick Up quality**: 5–10 items selected with concrete "Why I recommend" text
 - [ ] **Issues documented**: Any skipped sources or problems noted in PR body
 
 **Remember: Even if some quality checks fail, ALWAYS create the PR to document what happened.**
@@ -400,7 +396,7 @@ fi
 5. **Validation passed**: grep checks confirm no fake domains or placeholder content
 6. **Proper format**: Markdown follows template with all sections
 7. **Good coverage**: At least 10-15 articles total (if available from sources)
-8. **Approximate weighting**: ~60% AI, ~30% Tech, ~10% Others (based on real data)
+8. **Pick Up curated**: 5–10 items with concrete "Why I recommend" text, reflecting ML/AI focus
 9. **Compliance maintained**: No ToS violations, all rate limits respected (handled by script)
 
 **What constitutes a "failed" run:**
