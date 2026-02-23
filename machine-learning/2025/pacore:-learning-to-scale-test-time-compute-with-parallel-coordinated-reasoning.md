@@ -18,12 +18,14 @@ A key phenomenon the paper identifies is **Reasoning Solipsism**: vanilla langua
 
 PaCoRe operates in $R$ rounds. In round $r$, the model generates $K_r$ parallel trajectories:
 
-$$\Omega_r = \{\omega_r^{(1)}, \omega_r^{(2)}, \ldots, \omega_r^{(K_r)}\} \sim \pi_r(x, M_{r-1})$$
+$$\Omega_r = \{\omega_r^{(1)}, \omega_r^{(2)}, \ldots, \omega_r^{(K_r)}\} \sim \pi_r(\cdot \mid P(x, M_{r-1}))$$
 
 where:
-- $x$ is the input problem
-- $M_{r-1} = \{m_{r-1}^{(1)}, \ldots, m_{r-1}^{(K_{r-1})}\}$ is the compact message set from the previous round
-- $K_r$ is the number of parallel trajectories in round $r$ (e.g., $\vec{K} = [32, 4]$ for a two-round high-compute setting)
+- $x \in \mathcal{X}$ is the input problem
+- $M_{r-1} = \{m_{r-1}^{(1)}, \ldots, m_{r-1}^{(K_{r-1})}\} \in \mathcal{M}$ is the compact message set from the previous round
+- $K_r \in \mathbb{N}$ is the number of parallel trajectories in round $r$ (e.g., $\vec{K} = [32, 4]$ for a two-round high-compute setting)
+- $\pi_r : \mathcal{X} \times \mathcal{M} \to \Omega$ is the policy for round $r$, which is the same underlying model but with different prompts to encourage synthesis in later rounds
+- $P : \mathcal{X} \times \mathcal{M} \to \mathcal{X}$ is the prompt construction function that formats the input problem and previous messages into a coherent prompt for the model
 
 **Context serialization**: The context is constructed as $P(x, M_{r-1})$, concatenating the problem with the reference messages under the synthesis prompt:
 
@@ -39,7 +41,7 @@ $$m_r^{(i)} = C(\omega_r^{(i)}), \quad M_r = \{m_r^{(1)}, \ldots, m_r^{(K_r)}\}$
 ### Pseudocode
 
 ```
-Input: problem x, round schedule K⃗ = [K_1, K_2, ..., K_R]
+Input: problem x, round schedule K = [K_1, K_2, ..., K_R]
 Output: answer y
 
 M_0 = ∅  # empty initial message set
