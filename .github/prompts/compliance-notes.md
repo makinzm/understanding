@@ -48,6 +48,22 @@ This document archives the terms of service compliance requirements for all sour
   - Using WebFetch tool which respects standard web etiquette
   - If blocked or rate-limited, skip this source
 
+## Wiz Blog (fetch_trends workflow)
+
+**Access**: RSS feed (`https://www.wiz.io/feed/rss.xml`)
+- **Status**: ✅ Fully allowed; robots.txt permits all crawlers unconditionally
+- **Official Site**: https://www.wiz.io/blog
+- **Terms of Service**: https://legal.wiz.io/legal#terms-of-use
+- **Privacy Policy**: https://legal.wiz.io/legal#privacy-policy
+- **User-Agent**: `Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)`
+- **robots.txt**: https://www.wiz.io/robots.txt
+  - `User-agent: *` → `Allow: /` (no path restrictions, no crawl-delay)
+- **Last Checked**: 2026-02-23
+- **Notes**:
+  - Uses RSS feed (`/feed/rss.xml`) for reliable structured parsing — avoids JS-rendered HTML
+  - No rate limiting required, but single request per run is sufficient
+  - Only fetching public blog content
+
 ## arXiv (auto-summarize-papers workflow)
 
 **Access**: Paper content fetched via ar5iv (HTML mirror), not arxiv.org directly
@@ -64,6 +80,24 @@ This document archives the terms of service compliance requirements for all sour
 - **Notes**:
   - The `summarize-arxiv-paper` skill fetches `https://ar5iv.labs.arxiv.org/html/<ID>`, which is fully allowed
   - Never fetch `https://arxiv.org/pdf/` or bulk-scrape arxiv.org
+
+## arXiv cs.LG Listing (fetch_trends workflow)
+
+**Access**: HTML listing page scraped directly from `https://arxiv.org/list/cs.LG/recent`
+- **Status**: ⚠️ Allowed with strict rate limiting — `/list` is explicitly permitted but `Crawl-delay: 15` applies
+- **Official Site**: https://arxiv.org/
+- **Terms of Service**: https://arxiv.org/help/policies/terms_of_use
+- **User-Agent**: `Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)`
+- **robots.txt**: https://arxiv.org/robots.txt
+  - `User-agent: *` → `Crawl-delay: 15`
+  - `Allow: /list` (listing pages explicitly permitted)
+  - `Disallow: /search`, `/api`, `/pdf` (do not touch these)
+- **Last Checked**: 2026-02-23
+- **Notes**:
+  - `fetch_arxiv_csLG()` sleeps 15 seconds before every request (`time.sleep(15)`)
+  - Only fetches a **single page** (first 50 entries) per run — no pagination
+  - Parses `<dt>/<dd>` HTML to extract arXiv ID, title, and primary subject
+  - For full paper content, use ar5iv via the `summarize-arxiv-paper` skill (not this workflow)
 
 ## General Compliance Principles
 
@@ -83,3 +117,4 @@ This document archives the terms of service compliance requirements for all sour
 
 - 2026-02-08: Initial documentation
 - 2026-02-11: Fix Hatena crawl-delay from 2s to 5s (per robots.txt); add arXiv/ar5iv compliance section
+- 2026-02-23: Add Wiz Blog (RSS, no restrictions) and arXiv cs.LG listing (Crawl-delay: 15, single-page) sections for fetch_trends workflow
