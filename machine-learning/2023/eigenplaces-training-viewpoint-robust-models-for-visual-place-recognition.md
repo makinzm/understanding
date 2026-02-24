@@ -10,15 +10,20 @@
 
 Visual Place Recognition (VPR) determines the geographic location of a query photograph by retrieving the most visually similar image from a geotagged database. Existing methods are vulnerable to large viewpoint shifts between query and database images because their training data only pairs images captured from identical or near-identical orientations. EigenPlaces is a training protocol that overcomes this by using Singular Value Decomposition on geographic coordinates to identify building facades, then explicitly grouping training images that observe the same facade from spatially diverse lateral positions. This forces the backbone network to embed identical places into nearby descriptor vectors regardless of horizontal viewing angle. EigenPlaces achieves state-of-the-art on most of the 16 evaluated VPR benchmarks while requiring 50% smaller descriptors and 60% less GPU memory than the best competing method (MixVPR).
 
+> [!NOTE]
+> `descriptor` means the fixed-length vector output by the network that represents an image for retrieval; `backbone` refers to the convolutional neural network (e.g., ResNet-50) that extracts features from the input image before pooling and projection.
+>
+> `facade` refers to the front of a building that faces the street; `lateral position` means the position of the camera along the road, which affects the angle at which it views the facade.
+
 ---
 
 # 1. Introduction
 
 **Problem.** Given a query image $q$ and a geo-tagged database $\mathcal{D} = \{(i_k, p_k)\}$ of $|\mathcal{D}|$ images with known UTM positions $p_k$, VPR retrieves the database image whose descriptor is nearest to the query descriptor and reports its position as the estimated location. The core challenge is that images of the same place captured from different horizontal angles (viewpoint shift) can have very different pixel-level appearances.
 
-**Why existing training fails.** Prior classification-based methods such as CosPlace [8] assign each training class a single orientation angle: all images in a class face the same direction, so the model never sees the same building from two different sides. Metric-learning methods such as NetVLAD [5] mine positives from GPS proximity, which also tends to select same-viewpoint pairs. Neither strategy explicitly teaches viewpoint invariance.
+**Why existing training fails.** Prior classification-based methods such as [CosPlace](https://github.com/gmberton/CosPlace) assign each training class a single orientation angle: all images in a class face the same direction, so the model never sees the same building from two different sides. Metric-learning methods such as [NetVLAD](https://github.com/Relja/netvlad) mine positives from GPS proximity, which also tends to select same-viewpoint pairs. Neither strategy explicitly teaches viewpoint invariance.
 
-**EigenPlaces solution.** By computing SVD on the 2-D UTM coordinates of images within a small geographic cell, the method identifies the dominant road axis ($V_0$) and the perpendicular direction toward building facades ($V_1$). A focal point $c_i$ is placed along $V_1$ at distance $D$ from the cell centre. Images are then grouped by which focal point they face, so one class contains images shooting the same facade from left, centre, and right. Minimising CosFace loss on such classes teaches the network to produce identical descriptors across these viewpoints.
+**EigenPlaces solution.** By computing SVD (singular value decomposition) on the 2-D UTM coordinates of images within a small geographic cell, the method identifies the dominant road axis ($V_0$) and the perpendicular direction toward building facades ($V_1$). A focal point $c_i$ is placed along $V_1$ at distance $D$ from the cell centre. Images are then grouped by which focal point they face, so one class contains images shooting the same facade from left, centre, and right. Minimising CosFace loss on such classes teaches the network to produce identical descriptors across these viewpoints.
 
 ---
 
@@ -26,13 +31,13 @@ Visual Place Recognition (VPR) determines the geographic location of a query pho
 
 | Method | Training Strategy | Viewpoint Diversity in Classes |
 |--------|-------------------|-------------------------------|
-| NetVLAD [5] | Weakly supervised metric learning (GPS triplets) | None (GPS positives tend to share viewpoints) |
-| CosPlace [8] | Classification with orientation-grouped cells | None (all images face same direction per class) |
-| GSV-Cities / Conv-AP [1] | Classification with pre-defined classes | Low (pre-defined clusters at similar angles) |
-| MixVPR [2] | Classification + feature mixing augmentation | Low (same orientation-based grouping) |
+| NetVLAD | Weakly supervised metric learning (GPS triplets) | None (GPS positives tend to share viewpoints) |
+| CosPlace | Classification with orientation-grouped cells | None (all images face same direction per class) |
+| [GSV-Cities](https://github.com/amaralibey/gsv-cities) / Conv-AP | Classification with pre-defined classes | Low (pre-defined clusters at similar angles) |
+| [MixVPR](https://github.com/amaralibey/MixVPR) | Classification + feature mixing augmentation | Low (same orientation-based grouping) |
 | **EigenPlaces** | Classification with SVD-based focal-point classes | **Explicit** (lateral spread along road) |
 
-Post-processing methods (SuperGlue [44], LoFTR [46], Patch-NetVLAD [22]) operate on a retrieved shortlist and are complementary: they refine ranking but cannot help if the correct match was never retrieved. EigenPlaces targets the retrieval stage.
+Post-processing methods ([SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork?tab=readme-ov-file), [LoFTR](https://github.com/zju3dv/LoFTR), [Patch-NetVLAD](https://github.com/QVPR/Patch-NetVLAD)) operate on a retrieved shortlist and are complementary: they refine ranking but cannot help if the correct match was never retrieved. EigenPlaces targets the retrieval stage.
 
 ---
 
@@ -40,7 +45,9 @@ Post-processing methods (SuperGlue [44], LoFTR [46], Patch-NetVLAD [22]) operate
 
 ## 3.1 Map Partition
 
-**Input.** All training images with UTM positions $(e_j, n_j)$.
+**Input.** All training images with UTM positions $(e_j, n_j)$ (east, north).
+
+**Output.** A sequence of training batches, each containing a non-overlapping subset of images grouped into classes by their angle toward a focal point.
 
 **Procedure.**
 1. Overlay a regular grid of side $M = 15$ metres on the map.
@@ -49,9 +56,17 @@ Post-processing methods (SuperGlue [44], LoFTR [46], Patch-NetVLAD [22]) operate
 
 The $M=15$ m scale is chosen so that a single cell spans roughly one building face, ensuring that images in the same cell all observe a common facade.
 
+> [!NOTE]
+> This is how to create training classes without any manual labelling: each cell is a class, and all images in that cell belong to the same class. The SVD-based focal point construction (next section) then ensures that images in the same class have diverse viewpoints toward the same facade.
+
 ## 3.2 EigenPlaces Class Construction via SVD
 
 **Input.** A cell $i$ containing $p$ images at UTM positions $X_i \in \mathbb{R}^{p \times 2}$.
+
+> [!NOTE]
+> Any cell includes only images that are geographically close (within 15 m), so they all observe the same building facade but from different angles along the road.
+
+**Output.** Two classes of images in cell $i$: one for lateral viewpoint diversity, one for frontal viewpoint diversity, which is used for training labels in the CosFace loss.
 
 **Algorithm.**
 
@@ -92,13 +107,13 @@ Procedure EigenPlaces_ClassConstruct(X_i, D):
 ## 3.3 Training
 
 **Architecture.**
-- **Backbone $f$:** VGG-16 [45] or ResNet-50 [24], pretrained on ImageNet.
+- **Backbone $f$:** [VGG-16](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.vgg16.html) or [ResNet-50](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html), pretrained on ImageNet.
 - **Pooling:** Generalized Mean (GeM) aggregates spatial feature maps into a fixed-length vector.
 - **Projection head:** A fully-connected layer maps the pooled features to a $d$-dimensional descriptor ($d \in \{128, 512, 2048\}$).
 - **Input:** RGB image of any resolution (resized during training).
 - **Output:** $\ell_2$-normalised descriptor $x \in \mathbb{R}^d$.
 
-**CosFace loss (Large Margin Cosine Loss [54]).**
+**CosFace loss ([Large Margin Cosine Loss](https://arxiv.org/abs/1801.09414)).**
 
 For each loss component (lateral or frontal), the normalised class weight matrix $W \in \mathbb{R}^{d \times C}$ (one column per training class) is maintained. For a sample $x_i$ with ground-truth class $y_i$:
 
@@ -126,7 +141,7 @@ $$\mathcal{L} = \mathcal{L}_\text{lat}(f, W_\text{lat}) + \mathcal{L}_\text{fron
 | Focal distance $D$ | 10 m (default), 20 m (best) |
 | Data augmentation | Colour jitter, random crop |
 
-**Comparison with CosPlace.** CosPlace also uses geographic cells and CosFace, but groups images by their recorded GPS heading angle, so all images in a class face the same absolute direction. EigenPlaces ignores GPS heading and instead uses the SVD-inferred facade direction to build classes that span a range of viewing angles toward the same facade.
+**Comparison with CosPlace.** [CosPlace](https://github.com/gmberton/CosPlace) also uses geographic cells and CosFace, but groups images by their recorded GPS heading angle, so all images in a class face the same absolute direction. EigenPlaces ignores GPS heading and instead uses the SVD-inferred facade direction to build classes that span a range of viewing angles toward the same facade.
 
 ---
 
