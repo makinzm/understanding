@@ -42,6 +42,25 @@ Here $d$ is a metric on $\mathcal{X}$ and $\mathcal{Y}$, and $p \geq 1$.
 
 - [Wasserstein metric - Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric)
 
+Dual Problem
+
+```math
+\begin{aligned}
+\text{OT}(\mu, \nu, C) = \text{maximize}_{f \in L^1(\mu), g \in L^1(\nu)} \quad & \int_{\mathcal{X}} f(x) d\mu(x) + \int_{\mathcal{Y}} g(y) d\nu(y) \\
+\text{subject to} \quad & f(x) + g(y) \leq c(x, y) \quad \forall (x, y) \in \mathcal{X} \times \mathcal{Y}
+\end{aligned}
+```
+
+> [!NOTE]
+> 教科書にも記載があるが、$f$と$g$は、符号制約がないため、$-$をつけられたものも同じ問題を解いていることに注意する。
+
+c-transform is a way to find the optimal $g$ given $f$:
+
+```math
+f^c(y) := \inf_{x \in \mathcal{X}} c(x, y) - f(x)
+```
+
+The problem of Optimal Transport is related to minimum cost flow problem in combinatorial optimization.
 
 
 # 第3章　エントロピー正則化とシンクホーンアルゴリズム
