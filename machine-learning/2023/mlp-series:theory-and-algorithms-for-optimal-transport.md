@@ -65,9 +65,95 @@ The problem of Optimal Transport is related to minimum cost flow problem in comb
 
 # 第3章　エントロピー正則化とシンクホーンアルゴリズム
 
+Entropy Regularization of Optimal Transport Problem:
+
+```math
+\begin{aligned}
+\text{OT}_\varepsilon(\mu, \nu, C) := \text{minimize}_{\pi \in \mathcal{P}(\mathcal{X} \times \mathcal{Y})} \quad & \int_{\mathcal{X} \times \mathcal{Y}} c(x, y) d\pi(x, y) - \varepsilon H(\pi) \\
+\text{subject to} \quad & \pi(A \times \mathcal{Y}) = \mu(A) \quad \forall A \subseteq \mathcal{F}(\mathcal{X}) \\
+& \pi(\mathcal{X} \times B) = \nu(B) \quad \forall B \subseteq \mathcal{F}(\mathcal{Y}) \\
+& H(\pi) := -\int_{\mathcal{X} \times \mathcal{Y}} \log \pi(x, y) d\pi(x, y)
+\end{aligned}
+```
+
+This problem can be written by the independent $\tilde{P} = \mu \otimes \nu$ as follows:
+
+```math
+\begin{aligned}
+\text{OT}_\varepsilon(\mu, \nu, C) = \text{minimize}_{\pi \in \mathcal{P}(\mathcal{X} \times \mathcal{Y})} \quad & \int_{\mathcal{X} \times \mathcal{Y}} c(x, y) d\pi(x, y) + \varepsilon \text{KL}(\pi \| \tilde{P}) \\
+\text{subject to} \quad & \pi(A \times \mathcal{Y}) = \mu(A) \quad \forall A \subseteq \mathcal{F}(\mathcal{X}) \\
+& \pi(\mathcal{X} \times B) = \nu(B) \quad \forall B \subseteq \mathcal{F}(\mathcal{Y})
+\end{aligned}
+```
+
+```math
+\begin{aligned}
+\otimes \text{ is the product measure, and } \quad & \tilde{P}(A \times B) = \mu(A) \nu(B) \quad \forall A \subseteq \mathcal{F}(\mathcal{X}), B \subseteq \mathcal{F}(\mathcal{Y})
+\end{aligned}
+```
+
+OT with Entropy Regularization is a convex optimization problem, and its dual problem is as follows:
+
+```math
+\begin{aligned}
+\text{OT}_\varepsilon(\mu, \nu, C) = \text{maximize}_{f \in L^1(\mu), g \in L^1(\nu)} \quad & \int_{\mathcal{X}} f(x) d\mu(x) + \int_{\mathcal{Y}} g(y) d\nu(y) - \varepsilon \int_{\mathcal{X} \times \mathcal{Y}} e^{\frac{f(x) + g(y) - c(x, y)}{\varepsilon}} d\tilde{P}(x, y)
+\end{aligned}
+```
+
+This problem can be solved by Sinkhorn Algorithm, which is an iterative algorithm that updates $f$ and $g$ as follows:
+
+```math
+\begin{aligned}
+f^{(t+1)}(x) & = \varepsilon \log \frac{d \mu}{d x} - \varepsilon \log \int_{\mathcal{Y}} e^{\frac{g^{(t)}(y) - c(x, y)}{\varepsilon}} d\nu(y) \\
+g^{(t+1)}(y) & = \varepsilon \log \frac{d \nu}{d y} - \varepsilon \log \int_{\mathcal{X}} e^{\frac{f^{(t+1)}(x) - c(x, y)}{\varepsilon}} d\mu(x)
+\end{aligned}
+```
+
+This algorithm can be written by $u = e^{\frac{f}{\varepsilon}}$, $v = e^{\frac{g}{\varepsilon}}$ and $K(x, y) = e^{-\frac{c(x, y)}{\varepsilon}}$ as follows:
+
+```math
+\begin{aligned}
+u^{(t+1)}(x) & = \frac{d \mu}{d x} \left( \int_{\mathcal{Y}} K(x, y) v^{(t)}(y) d\nu(y) \right)^{-1} \\
+v^{(t+1)}(y) & = \frac{d \nu}{d y} \left( \int_{\mathcal{X}} K(x, y) u^{(t+1)}(x) d\mu(x) \right)^{-1}
+\end{aligned}
+```
+
+So it is calculated by matrix-vector multiplication, and it can be implemented by GPU.
+
+Sinkhorn Algorithm converges to the optimal solution of OT with Entropy Regularization, and it has a linear convergence rate, which is proven by the Hilbert's projective metric.
+
+OT with Entropy Regularization is differentiable with respect to $\mu$, $\nu$ and $C$, and its gradient can be calculated by the optimal $f$ and $g$, which is proven by Danskin's Theorem and Lagrangian relaxation.
+
+However, OT with Entropy Regularization does not converge to the optimal solution of OT as $\varepsilon \to 0$, and it has a bias that is proportional to $\varepsilon$ and does not meet the axioms of a metric. So, synchorn divergence is proposed as a way to remove the bias of OT with Entropy Regularization, which is defined as follows:
+
+```math
+\text{SD}_\varepsilon(\mu, \nu, C) := \text{OT}_\varepsilon(\mu, \nu, C) - \frac{1}{2} \text{OT}_\varepsilon(\mu, \mu, C) - \frac{1}{2} \text{OT}_\varepsilon(\nu, \nu, C)
+```
+
 # 第4章　敵対的ネットワーク
 
+GAN is a framework for training generative models, which consists of a generator $g$ and a discriminator $d$, which are trained by the following min-max problem:
+
+```math
+\begin{aligned}\text{minimize}_g \text{maximize}_d \quad & \mathbb{E}_{x \sim p_{\text{data}}} [\log d(x)] + \mathbb{E}_{z \sim p_z} [\log (1 - d(g(z)))]\end{aligned}
+```
+
+However, this problem is not easy to optimize because of vanishing gradients, when the discriminator is too good, and mode collapse, when the generator is too good.
+
+Wasserstein GAN is a framework for training generative models, which consists of a generator $g$ and a discriminator $d$, which are trained by the following min-max problem:
+
+```math
+\begin{aligned}
+\text{minimize}_g \text{maximize}_d \quad & \mathbb{E}_{x \sim p_{\text{data}}} [d(x)] - \mathbb{E}_{z \sim p_z} [d(g(z))] \\
+\text{subject to} \quad & d \text{ is 1-Lipschitz}
+\end{aligned}
+```
+
 # 第5章　スライス法
+
+There is a method to calculate OT by slicing the distributions into one-dimensional distributions, which is called Sliced Optimal Transport, and it can be calculated by the closed-form solution of OT for one-dimensional distributions.
+
+[最適輸送が遅すぎる（スライス法による解法） - Speaker Deck](https://speakerdeck.com/joisino/zui-shi-shu-song-gachi-sugiru-suraisufa-niyorujie-fa)
 
 # 第6章　他のダイバージェンスとの比較
 
