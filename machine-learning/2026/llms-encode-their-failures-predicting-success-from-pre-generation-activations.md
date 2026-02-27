@@ -1,7 +1,7 @@
 # Meta Information
 
 - URL: [LLMs Encode Their Failures: Predicting Success from Pre-Generation Activations](https://arxiv.org/abs/2602.09924)
-- LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
+- LICENSE: https://creativecommons.org/licenses/by/4.0/
 - Reference: Lugoloobi, W., Foster, T., Bankes, W., & Russell, C. (2026). LLMs Encode Their Failures: Predicting Success from Pre-Generation Activations. arXiv:2602.09924.
 
 # LLMs Encode Their Failures: Predicting Success from Pre-Generation Activations
