@@ -180,6 +180,20 @@ There are a lot of $\mathcal{F}$ and $\mathcal{G}$, such as KL Divergence, Total
 
 # 第8章　ワッサースタイン重心
 
+Wasserstein Barycenter is a framework for calculating the barycenter of a set of probability measures, which is defined as follows by $\lambda_i$ and $\mu_i$, which are the weights and the probability measures, respectively:
+
+```math
+\begin{aligned}
+\text{WB}(\lambda, \mu, C) := \text{argmin}_{\nu \in \mathcal{P}(\mathcal{Y})} \quad & \sum_{i=1}^N \lambda_i W_p(\nu, \mu_i)^p
+\end{aligned}
+```
+
+This framework is calculated by subgradient descent.
+
+- [Fast Computation of Wasserstein Barycenters](https://arxiv.org/pdf/1310.4375)
+
+- Application of Wasserstein Barycenter: [Convolutional Wasserstein Distances: Efficient Optimal Transportation on Geometric Domains](https://people.csail.mit.edu/jsolomon/assets/convolutional_w2.compressed.pdf)
+
 # 第9章　グロモフ・ワッサースタイン距離
 
 # 第10章　おわりに
