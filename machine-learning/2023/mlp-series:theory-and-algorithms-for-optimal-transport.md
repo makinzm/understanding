@@ -163,6 +163,21 @@ There is a method to calculate OT by slicing the distributions into one-dimensio
 
 # 第7章　不均衡最適輸送
 
+Unbaalanced Optimal Transport is a framework for comparing unnormalized measures, which is defined as follows by $\mathcal{F}$ and $\mathcal{G}$, which are convex functions that measure the divergence from $\mu$ and $\nu$ to the set of probability measures, respectively:
+
+```math
+\begin{aligned}
+\text{UOT}(\mu, \nu, C) := \text{minimize}_{\pi \in \mathcal{M}(\mathcal{X} \times \mathcal{Y})} \quad & \int_{\mathcal{X} \times \mathcal{Y}} c(x, y) d\pi(x, y) + \mathcal{F}(\pi(\cdot \times \mathcal{Y})) + \mathcal{G}(\pi(\mathcal{X} \times \cdot)) \\
+\text{subject to} \quad & \pi \in \mathcal{M}(\mathcal{X} \times \mathcal{Y})
+\end{aligned}
+```
+
+This framework is useful for dealing with outliers and for comparing distributions with different total masses.
+
+There are a lot of $\mathcal{F}$ and $\mathcal{G}$, such as KL Divergence, Total Variation Distance, and so on.
+
+- [[1607.05816] Scaling Algorithms for Unbalanced Transport Problems](https://arxiv.org/abs/1607.05816)
+
 # 第8章　ワッサースタイン重心
 
 # 第9章　グロモフ・ワッサースタイン距離
