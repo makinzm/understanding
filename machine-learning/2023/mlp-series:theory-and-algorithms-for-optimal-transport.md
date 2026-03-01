@@ -157,6 +157,10 @@ There is a method to calculate OT by slicing the distributions into one-dimensio
 
 # 第6章　他のダイバージェンスとの比較
 
+1. [Divergence (statistics) - Wikipedia](https://en.wikipedia.org/wiki/Divergence_%28statistics%29)
+1. [Integral probability metric - Wikipedia](https://en.wikipedia.org/wiki/Integral_probability_metric)
+
+
 # 第7章　不均衡最適輸送
 
 # 第8章　ワッサースタイン重心
