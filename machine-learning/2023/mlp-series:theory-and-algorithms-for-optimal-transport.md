@@ -196,4 +196,18 @@ This framework is calculated by subgradient descent.
 
 # 第9章　グロモフ・ワッサースタイン距離
 
+Gromov-Wasserstein Distance is a framework for comparing metric measure spaces, which is defined as follows by $d_X$ and $d_Y$, which are the metrics on $\mathcal{X}$ and $\mathcal{Y}$, respectively:
+
+```math
+\begin{aligned}
+\text{GW}(\mu, \nu, d_X, d_Y)^p := \text{minimize}_{\pi \in \mathcal{P}(\mathcal{X} \times \mathcal{Y})} \quad & \int_{\mathcal{X \times \mathcal{Y}}} \int_{\mathcal{X} \times \mathcal{Y}} |d_X(x, x') - d_Y(y, y')|^p d\pi(x, y) d\pi(x', y') \\
+\text{subject to} \quad & \pi(A \times \mathcal{Y}) = \mu(A) \quad \forall A \subseteq \mathcal{F}(\mathcal{X}) \\
+& \pi(\mathcal{X} \times B) = \nu(B) \quad \forall B \subseteq \mathcal{F}(\mathcal{Y})
+\end{aligned}
+```
+
+- [Entropic Metric Alignment for Correspondence Problems](https://people.csail.mit.edu/jsolomon/assets/gw.pdf) is the way to solve GW by proximal gradient methods.
+
 # 第10章　おわりに
+
+[PythonOT/POT: POT : Python Optimal Transport](https://github.com/PythonOT/POT) is introduced as the best known library for optimal transport.
