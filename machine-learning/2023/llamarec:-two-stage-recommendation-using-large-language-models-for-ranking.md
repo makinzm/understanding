@@ -35,6 +35,13 @@ The retrieval stage uses LRURec (Linear Recurrent Unit-based Recommender), a seq
 > [!TIP]
 > LRURec is based on linear recurrent units (LRU), which are more efficient than self-attention for long sequences, enabling retrieval from large item catalogues in sub-linear time.
 
+> [!NOTE]
+> 全てのアイテムに対して、LRURecを適応するため現実的ではないと感じた。
+>
+> 実際、[Yueeeeeeee/LlamaRec: [PGAI@CIKM 2023] PyTorch Implementation of LlamaRec: Two-Stage Recommendation using Large Language Models for Ranking](https://github.com/Yueeeeeeee/LlamaRec/tree/main) の `model/lru.py`の `LRURec` クラスの `forward` メソッドを見ると ユーザーの特徴量`x`に対して、全てのアイテムの重みである`embedding_weight.permute(1, 0)`を掛けている。これが全アイテムに対してLRURecを適応していると読み取れる。
+>
+> 本来であれば、こちらはANN（Approximate Nearest Neighbor）などの手法を用いて、ユーザー特徴量とアイテム特徴量の近さを計算して、上位K件を選択するような実装になると思うが、実装では全アイテムに対してLRURecを適応しているように見える。
+
 ## Stage 2: LLM Ranking via Verbalizer
 
 ### Prompt Construction
