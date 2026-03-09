@@ -56,6 +56,8 @@ Under isolation, mutual information between the safety target and model paramete
 
 $$I(\pi^*; \Theta_{t+1}) \leq I(\pi^*; \Theta_t)$$
 
+$I$ is the mutual information metric, which quantifies how much information about $\pi^*$ is retained in $\Theta_t$.
+
 This follows from the **data processing inequality**: because $\Theta_{t+1}$ is derived solely from $\mathcal{D}_{t+1}$, which is generated from $\Theta_t$ without access to $\pi^*$, the chain $\pi^* \to \Theta_t \to \mathcal{D}_{t+1} \to \Theta_{t+1}$ forms a Markov chain, and mutual information cannot increase along a Markov chain.
 
 **Lemma 2.5 — Coverage Shrinkage from Finite Sampling**
@@ -192,3 +194,7 @@ Actively prune accumulated unsafe or redundant memories. For memory-based system
   - RL-based: ASR on AdvBench increased steadily to harmfulness score ~4.1/5.0; TruthfulQA MC1 declined consistently over 20 rounds
   - Memory-based: Slower jailbreak vulnerability increase but steeper hallucination rate decline
   - Both paradigms showed progressive degradation confirming the theoretical impossibility result
+
+
+> [!NOTE]
+> エコーチェンバー効果（Echo Chamber Effect）とは、情報が同質的な環境内で反響し、偏った見解が強化される現象を指します。自己進化するAI社会においても、エコーチェンバー効果が発生しやすく、特定の安全でない行動や信念が強化される可能性があると感じました。
