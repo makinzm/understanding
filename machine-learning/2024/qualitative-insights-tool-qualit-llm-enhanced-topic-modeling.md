@@ -117,11 +117,22 @@ for each cluster C_k:
 
 $$\text{NPMI}(x, y) = \frac{\ln\!\left(\frac{p(x,y)}{p(x)\,p(y)}\right)}{-\ln\,p(x,y)}$$
 
+$p(x)$ is the probability of word $x$ occurring in the corpus, and $p(x,y)$ is the probability of words $x$ and $y$ co-occurring within a sliding window.
+
 Ranges from $-1$ to $+1$. Higher values indicate that the top-$n$ most frequent words within a topic co-occur more than expected by chance, reflecting greater semantic relatedness.
+
+```math
+\text{Coherence}(T_k) = \frac{2}{n(n-1)} \sum_{i=1}^{n} \sum_{j=i+1}^{n} \text{NPMI}(w_i, w_j)
+```
 
 ### Topic Diversity
 
-$$\text{Diversity} = \frac{|\text{unique words across all topics}|}{|\text{total words across all topics}|}$$
+```math
+\begin{aligned}
+\text{Diversity} &= \frac{|\text{unique words across all topics}|}{|\text{total words across all topics}|} \\
+&= \frac{\sum_{k=1}^{K} |\text{unique words in topic } T_k \text{ across all } K \text{ topics}|}{\|\text{total words in all topics}\|}
+\end{aligned}
+```
 
 Ranges from 0 to 1. A value close to 1 means topics are distinct and non-overlapping; a value close to 0 indicates highly redundant topics.
 
