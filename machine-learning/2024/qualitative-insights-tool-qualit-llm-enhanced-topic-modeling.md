@@ -1,7 +1,7 @@
 # Meta Information
 
 - URL: [Qualitative Insights Tool (QualIT): LLM Enhanced Topic Modeling](https://arxiv.org/abs/2409.15626)
-- LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
+- LICENSE: [Deed - Attribution 4.0 International - Creative Commons](https://creativecommons.org/licenses/by/4.0/)
 - Reference: Kapoor, S., Gil, A., Bhaduri, S., Mittal, A., & Mulkar, R. (2024). Qualitative Insights Tool (QualIT): LLM Enhanced Topic Modeling. arXiv:2409.15626.
 
 # Qualitative Insights Tool (QualIT): LLM Enhanced Topic Modeling
