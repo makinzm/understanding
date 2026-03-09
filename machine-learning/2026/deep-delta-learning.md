@@ -211,4 +211,4 @@ DDL connects to several lines of prior work:
 > The gains in validation loss and downstream accuracy are real but modest (e.g., ~0.015 improvement in validation loss for the 353M model). DDL adds architectural complexity; whether the benefit justifies this in production-scale training remains to be evaluated at larger scales (e.g., 1B+ parameters).
 
 > [!NOTE]
-> 飽くまでDDLはいつどのように注目をするかをネットワークに学習させることが可能になるものであり、既存のskip connectionのような自由度の高い構造を提供するものではない。
+> 飽くまでDDLはいつどのように注目をするかをネットワークに学習させることが可能になるものであり、既存のskip connectionのような自由度の高い構造を提供するものではない。ただ、$k$や$v$のバックボーンにTransformerを用いることで、DDLは入力に応じて動的に注目する方向や値を変えることができるため、従来の固定的なskip connectionと同じような柔軟性を持つことができる。
