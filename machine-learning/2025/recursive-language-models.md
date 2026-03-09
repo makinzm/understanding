@@ -3,6 +3,7 @@
 - URL: [Recursive Language Models](https://arxiv.org/abs/2512.24601)
 - LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
 - Reference: Zhang, A. L., Kraska, T., & Khattab, O. (2025). Recursive Language Models. arXiv preprint arXiv:2512.24601.
+- Code: [alexzhang13/rlm: General plug-and-play inference library for Recursive Language Models (RLMs), supporting various sandboxes.](https://github.com/alexzhang13/rlm)
 
 # Recursive Language Models (RLMs)
 
