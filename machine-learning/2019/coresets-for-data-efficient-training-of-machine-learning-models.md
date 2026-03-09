@@ -3,6 +3,7 @@
 - URL: [CRAIG: Coresets for Data-efficient Training of Machine Learning Models](https://arxiv.org/abs/1906.01827)
 - LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
 - Reference: Mirzasoleiman, B., Bilmes, J., & Leskovec, J. (2020). Coresets for Data-efficient Training of Machine Learning Models. *Proceedings of the 37th International Conference on Machine Learning (ICML 2020)*.
+- Code: [baharanm/craig: Data-efficient Training of Machine Learning Models](https://github.com/baharanm/craig)
 
 ---
 
@@ -53,7 +54,7 @@ The coreset selection problem is transformed into a **submodular facility locati
 
 $$L(S) = \sum_{i \in V} \min_{j \in S} d_{ij}$$
 
-where $d_{ij}$ is the gradient distance between points $i$ and $j$ (approximated via feature distances). Adding a sentinel element $s_0$ with $d_{i,s_0} = \max_{i,j} d_{ij}$ ensures $L(\{s_0\}) < \infty$.
+where $d_{ij}$ is the gradient distance between points $i$ and $j$ (approximated via feature distances). Adding a sentinel element $s_0$ with $d_{i,s_0} = \max_{i,j} d_{ij}$ ensures $L(\{s_0\}) < \infty$. $V$ is the ground set of all data points.
 
 The facility location function to maximize is:
 
