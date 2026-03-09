@@ -8,6 +8,9 @@
 
 MobileNetV4 (MNv4) is a family of neural network architectures designed to achieve Pareto-optimal efficiency on diverse mobile hardware (CPUs, EdgeTPUs, DSPs, GPUs, Apple Neural Engine) without platform-specific tuning. The core insight is that a single model design can simultaneously minimize latency across heterogeneous accelerators by balancing compute and memory bandwidth using the Roofline Model.
 
+> [!NOTE]
+> パレート最適の定義は、ゲーム理論の概念で、他の戦略をとった際に誰かの効用が減少することなく、ある戦略を改善できない状態を指します。MNv4は、他のモデルと比較して、どのハードウェアプラットフォームにおいても、精度とレイテンシのトレードオフが改善されているため、パレート最適であると主張しています。
+
 **Applicability**: Researchers and practitioners deploying computer vision models on mobile or edge devices (smartphones, IoT sensors, embedded systems) who need accuracy/latency tradeoffs that generalize across hardware vendors.
 
 ## Background: Roofline Model for Hardware-Independent Efficiency
@@ -32,6 +35,11 @@ The UIB block is the primary building block of MNv4. It unifies four existing bl
 | ConvNext | present | absent | Spatial mixing with larger kernel before expansion |
 | ExtraDW | present | present | Both depthwise ops; cheap depth and receptive field increase (new) |
 | FFN | absent | absent | Two 1×1 pointwise convolutions only |
+
+> [!NOTE]
+> DW1はPointwiseの中間で空間的な混合を行い、DW2はPointwiseの後で空間的な混合を行います。これにより、NAS（Neural Architecture Search）が各層で最適な空間混合戦略を選択できるようになります。
+>
+> Depthwiseはあるチャネルのみに作用する畳み込みで、Pointwiseは全チャネルを混合する1×1の畳み込みです。これらのオプションの組み合わせにより、NASが各層で最適な空間混合戦略を選択できるようになります。
 
 **Input/Output**: UIB takes a feature map $x \in \mathbb{R}^{H \times W \times C_{in}}$ and outputs $y \in \mathbb{R}^{H' \times W' \times C_{out}}$, where $H', W'$ depend on stride settings (1 or 2).
 
