@@ -18,6 +18,9 @@ $$p(\mathbf{x}) = \prod_{t=1}^{T} p(x_t \mid x_1, x_2, \ldots, x_{t-1})$$
 
 Each audio sample $x_t \in \{0, 1, \ldots, 255\}$ (after quantization) is predicted from a softmax over all preceding samples in the sequence. This is a fully autoregressive model: generation proceeds sequentially, and each prediction depends on all prior outputs.
 
+> [!NOTE]
+> $x$はamplitudeつまり音の大きさで、frequency振動数ではない。というのも振動数は時間とともに音を出力することで表現されるため、一点一点の時刻においては振動数の情報は含まれないからである。
+
 **Comparison with RNNs:** LSTMs also model sequences autoregressively but process one step at a time via hidden states. WaveNet replaces recurrence with dilated convolutions, enabling full parallelization during training (all $T$ predictions are computed simultaneously), while generation remains sequential.
 
 ## 2. Causal and Dilated Convolutions
@@ -83,6 +86,9 @@ The final output stack processes $\mathbf{s}$ through ReLU → $1 \times 1$ conv
 > [!IMPORTANT]
 > The skip connections ensure that all layers contribute directly to the output distribution, not just the final layer. This prevents gradient vanishing in very deep models (often 30–60 dilated conv layers).
 
+> [!NOTE]
+> 一般的にSkip connectionとResidual connectionは同じ意味で使われることが多いが、WaveNetでは両方を明確に区別している。Residual connectionは次の層への入力を形成するもので、Skip connectionは最終出力への寄与を形成するものである。
+
 ## 5. Output Quantization: μ-law Companding
 
 Raw audio is stored as 16-bit integers (65,536 levels). WaveNet quantizes samples to 256 levels using the μ-law companding transformation:
@@ -100,6 +106,13 @@ WaveNet supports conditioning on external signals $\mathbf{h}$ to control genera
 A single embedding vector $\mathbf{h} \in \mathbb{R}^{d_h}$ (e.g., one-hot speaker identity) is projected and broadcast across all time steps:
 
 $$\mathbf{z} = \tanh(W_{f,k} \ast \mathbf{x} + V_{f,k}^{\top} \mathbf{h}) \odot \sigma(W_{g,k} \ast \mathbf{x} + V_{g,k}^{\top} \mathbf{h})$$
+
+```math
+\begin{aligned}
+V_{f,k} \in \mathbb{R}^{d_h \times r} &\text{ is the filter conditioning projection at layer } k \\
+V_{g,k} \in \mathbb{R}^{d_h \times r} &\text{ is the gate conditioning projection at layer } k
+\end{aligned}
+```
 
 $V_{f,k}^{\top} \mathbf{h} \in \mathbb{R}^r$ is broadcast over all time steps $T$.
 
