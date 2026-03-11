@@ -84,7 +84,31 @@ To provide security for native applications when using OIDC.
 
 Steganography is the practice of hiding messages or information within other non-secret text or data.
 
-It is a form of security through obscurity, where the existence of the message is hidden rather than just its content.
+It is a form of security through obscurity, where the existence of the message is hidden rather than just its content
+
+## History of Cryptography
+
+There are many algorithms in the history of cryptography. Here are some of them:
+
+1. Caeser Cipher: [Caesar cipher - Wikipedia](https://en.wikipedia.org/wiki/Caesar_cipher)
+    - It is solved by Brute-force attack because there are only 25 possible keys (shifts).
+    - [Brute-force attack - Wikipedia](https://en.wikipedia.org/wiki/Brute-force_attack)
+2. Substitution Cipher: [Substitution cipher - Wikipedia](https://en.wikipedia.org/wiki/Substitution_cipher)
+    - It is solved by Frequency analysis because each letter is replaced by another letter, and the frequency of letters in the ciphertext can be analyzed to guess the original letters.
+    - [Frequency analysis - Wikipedia](https://en.wikipedia.org/wiki/Frequency_analysis)
+3. Vigenère Cipher: [Vigenère cipher - Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
+    - This algorithm needs key to encrypt and decrypt the message, and the key is repeated to encrypt the message. Therefore, it is not a simple substitution cipher.
+    - It is solved by Kasiski examination because it is a polyalphabetic cipher, and the length of the key can be determined by analyzing the repeated sequences in the ciphertext.
+    - [Kasiski examination - Wikipedia](https://en.wikipedia.org/wiki/Kasiski_examination)
+4. Enigma Machine: [Enigma machine - Wikipedia](https://en.wikipedia.org/wiki/Enigma_machine)
+    - This algorithm needs a machine to encrypt and decrypt the message, and it was used by the Germans during World War II. The machine has a complex wiring system that changes the encryption each time a key is pressed.
+    - It is solved by Marian Rejewski because they were able to reconstruct the wiring of the Enigma machine and then use that information to break the code.
+    - [Marian Rejewski - Wikipedia](https://en.wikipedia.org/wiki/Marian_Rejewski)
+5. DES (Data Encryption Standard): [Data Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
+6. AES (Advanced Encryption Standard): [Advanced Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
+7. RSA (Rivest–Shamir–Adleman): [RSA (cryptosystem) - Wikipedia](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
+8. ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
+9. SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
 
 # 2. Authentication
 
