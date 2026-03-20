@@ -117,6 +117,24 @@ There are many algorithms in the history of cryptography. Here are some of them:
 8. Asymmetric: ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
 9. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
 
+## Block Cipher Modes
+
+1. ECB (Electronic Codebook): [Electronic codebook - Wikipedia](https://en.wikipedia.org/wiki/Electronic_codebook)
+    - It is the simplest mode of operation for a block cipher, where each block of plaintext is encrypted independently using the same key. However, it is not recommended for use because it can reveal patterns in the plaintext and is vulnerable to certain attacks.
+2. CBC (Cipher Block Chaining): [Cipher block chaining - Wikipedia](https://en.wikipedia.org/wiki/Cipher_block_chaining)
+    - It is a mode of operation for a block cipher that uses an initialization vector (IV) to encrypt the first block of plaintext, and then each subsequent block of plaintext is XORed with the previous ciphertext block before being encrypted. This mode provides better security than ECB because it can hide patterns in the plaintext. However, it is still vulnerable to certain attacks, such as padding oracle attacks or bit-flipping attacks for IV.
+    - [Padding oracle attack - Wikipedia](https://en.wikipedia.org/wiki/Padding_oracle_attack)
+    - [Bit-flipping attack - Wikipedia](https://en.wikipedia.org/wiki/Bit-flipping_attack)
+3. CTS (Ciphertext Stealing): [Ciphertext stealing - Wikipedia](https://en.wikipedia.org/wiki/Ciphertext_stealing)
+    - It is a mode of operation for a block cipher that allows encryption of data that is not a multiple of the block size without the need for padding. It works by encrypting the last two blocks of plaintext together and then stealing some of the ciphertext to create a final ciphertext that is the same length as the original plaintext. This mode provides better security than ECB and CBC because it can hide patterns in the plaintext and does not require padding, which can be vulnerable to certain attacks.
+4. CFB (Cipher Feedback): [Cipher feedback - Wikipedia](https://en.wikipedia.org/wiki/Cipher_feedback)
+    - It is a mode of operation for a block cipher that allows encryption of data in units smaller than the block size. It works by encrypting the previous ciphertext block and then XORing it with the current plaintext block to produce the current ciphertext block. This mode provides better security than ECB because it can hide patterns in the plaintext and allows for encryption of data in smaller units. However, it is still vulnerable to certain attacks, such as replay attacks or bit-flipping attacks for IV.
+    - [Replay attack - Wikipedia](https://en.wikipedia.org/wiki/Replay_attack)
+5. OFB (Output Feedback): [Output feedback - Wikipedia](https://en.wikipedia.org/wiki/Output_feedback)
+    - It is a mode of operation for a block cipher that allows encryption of data in units smaller than the block size. It works by encrypting the previous ciphertext block and then XORing it with the current plaintext block to produce the current ciphertext block. This mode provides better security than ECB because it can hide patterns in the plaintext and allows for encryption of data in smaller units. However, it is still vulnerable to certain attacks, such as replay attacks or bit-flipping attacks for IV.
+6. CTR (Counter): [Counter mode - Wikipedia](https://en.wikipedia.org/wiki/Counter_mode)
+    - It is a mode of operation for a block cipher that allows encryption of data in units smaller than the block size. It works by encrypting a counter value, called a nonce, and then XORing it with the current plaintext block to produce the current ciphertext block. This mode provides better security than ECB because it can hide patterns in the plaintext and allows for encryption of data in smaller units. However, it is still vulnerable to certain attacks, such as replay attacks or bit-flipping attacks for IV.
+  
 ## Other Topics
 
 - [CRYPTREC | トップページ](https://www.cryptrec.go.jp/index.html)
