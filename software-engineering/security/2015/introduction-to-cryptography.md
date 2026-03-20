@@ -104,11 +104,23 @@ There are many algorithms in the history of cryptography. Here are some of them:
     - This algorithm needs a machine to encrypt and decrypt the message, and it was used by the Germans during World War II. The machine has a complex wiring system that changes the encryption each time a key is pressed.
     - It is solved by Marian Rejewski because they were able to reconstruct the wiring of the Enigma machine and then use that information to break the code.
     - [Marian Rejewski - Wikipedia](https://en.wikipedia.org/wiki/Marian_Rejewski)
-5. DES (Data Encryption Standard): [Data Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
-6. AES (Advanced Encryption Standard): [Advanced Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
-7. RSA (Rivest–Shamir–Adleman): [RSA (cryptosystem) - Wikipedia](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
-8. ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
-9. SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
+4. Vernam Cipher: [Vernam cipher - Wikipedia](https://en.wikipedia.org/wiki/Vernam_cipher)
+    - This algorithm use XOR operation to encrypt and decrypt the message, and it is also known as one-time pad because the key is used only once. It is unbreakable if the key is truly random and kept secret.
+5. Symmetric: DES (Data Encryption Standard): [Data Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
+   - Block cipher that uses a 56-bit key to encrypt 64-bit blocks of data with rounds and different subkeys. It was widely used in the past but is now considered insecure due to its short key length and vulnerability to brute-force attacks.
+5. Symmetric: Triple DES (3DES): [Triple DES - Wikipedia](https://en.wikipedia.org/wiki/Triple_DES)
+    - An enhancement of DES that applies the DES algorithm three times to each data block, effectively increasing the key length to 168 bits. It was designed to provide better security than DES because the number of blute-force attacks is 2^112, which is much larger than 2^56 for DES. However, it is now considered less secure than AES and is being phased out in favor of AES.
+6. Symmetric: AES (Advanced Encryption Standard): [Advanced Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
+    - [FIPS 197, Advanced Encryption Standard (AES)](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf)
+    - A block cipher that uses a key size of 128, 192, or 256 bits to encrypt 128-bit blocks of data with rounds and different subkeys. It is currently the most widely used symmetric encryption algorithm and is considered secure for most applications. This is called Rijndael algorithm, and it was selected as the winner of the AES competition held by NIST in 2001.
+7. Asymmetric: RSA (Rivest–Shamir–Adleman): [RSA (cryptosystem) - Wikipedia](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
+8. Asymmetric: ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
+9. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
+
+## Other Topics
+
+- [CRYPTREC | トップページ](https://www.cryptrec.go.jp/index.html)
+    - CRYPTREC (Cryptography Research and Evaluation Committees) is a project that evaluates and recommends cryptographic algorithms for use in Japan. It provides a list of recommended algorithms for different purposes, such as encryption, hashing, and digital signatures.
 
 # 2. Authentication
 
