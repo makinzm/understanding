@@ -113,8 +113,28 @@ There are many algorithms in the history of cryptography. Here are some of them:
 6. Symmetric: AES (Advanced Encryption Standard): [Advanced Encryption Standard - Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
     - [FIPS 197, Advanced Encryption Standard (AES)](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf)
     - A block cipher that uses a key size of 128, 192, or 256 bits to encrypt 128-bit blocks of data with rounds and different subkeys. It is currently the most widely used symmetric encryption algorithm and is considered secure for most applications. This is called Rijndael algorithm, and it was selected as the winner of the AES competition held by NIST in 2001.
+
+---
+
+The problem is how to share the key between the sender and receiver in symmetric-key cryptography.
+
+There are four main methods to share the key:
+1. Pre-shared key: The sender and receiver agree on a key before communication. This method is not scalable and can be vulnerable to interception during the key exchange process.
+2. Key distribution center (KDC): A trusted third party that generates and distributes keys to the sender and receiver. This method can be more secure than pre-shared keys but can still be vulnerable to attacks on the KDC.
+3. Diffie-Hellman key exchange: A method that allows the sender and receiver to securely exchange keys over an insecure channel without the need for a trusted third party. It is based on the mathematical problem of discrete logarithms, and it is widely used in many cryptographic protocols, such as SSL/TLS and SSH.
+4. Asymmetric-key cryptography: The sender and receiver use a pair of public and private keys to encrypt and decrypt messages. The sender encrypts the message with the receiver's public key, and the receiver decrypts the message with their private key. This method is more secure than the previous methods because the private key is never shared, but it can be slower than symmetric-key cryptography due to the computational complexity of the algorithms used.
+
+
+---
+
+
 7. Asymmetric: RSA (Rivest–Shamir–Adleman): [RSA (cryptosystem) - Wikipedia](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
+    - It is based on the mathematical problem of factoring large integers, and it is widely used in many cryptographic protocols, such as SSL/TLS and PGP. $\text{Ciphertext} = \text{Plaintext}^e \mod n$ and $\text{Plaintext} = \text{Ciphertext}^d \mod n$, where $n$ is the product of two large prime numbers, $e$ is the public exponent, and $d$ is the private exponent. However, it is vulnerable to certain attacks, such as brute-force attack and man-in-the-middle attack.
+    - [man-in-the-middle attack - Wikipedia](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
+    - RSA-OAEP (Optimal Asymmetric Encryption Padding) is a padding scheme that can be used with RSA to provide better security against certain attacks, such as chosen ciphertext attacks. It works by adding random padding to the plaintext before encryption, which makes it more difficult for attackers to guess the original plaintext.
+    - [Optimal asymmetric encryption padding - Wikipedia](https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding)
 8. Asymmetric: ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
+    - It is based on the mathematical problem of elliptic curves, and it is widely used in many cryptographic protocols, such as SSL/TLS and Bitcoin. It provides better security than RSA with smaller key sizes, which makes it more efficient for certain applications, such as mobile devices and IoT devices.
 9. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
 
 ## Block Cipher Modes
