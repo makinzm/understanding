@@ -135,7 +135,6 @@ There are four main methods to share the key:
     - [Optimal asymmetric encryption padding - Wikipedia](https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding)
 8. Asymmetric: ECC (Elliptic Curve Cryptography): [Elliptic curve cryptography - Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_cryptography)
     - It is based on the mathematical problem of elliptic curves, and it is widely used in many cryptographic protocols, such as SSL/TLS and Bitcoin. It provides better security than RSA with smaller key sizes, which makes it more efficient for certain applications, such as mobile devices and IoT devices.
-9. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
 
 ## Block Cipher Modes
 
@@ -161,6 +160,12 @@ There are four main methods to share the key:
     - CRYPTREC (Cryptography Research and Evaluation Committees) is a project that evaluates and recommends cryptographic algorithms for use in Japan. It provides a list of recommended algorithms for different purposes, such as encryption, hashing, and digital signatures.
 
 # 2. Authentication
+
+1. Hash: One-way hash function: [One-way function - Wikipedia](https://en.wikipedia.org/wiki/One-way_function)
+    - A one-way hash function is a mathematical function that takes an input and produces a fixed-size output, called a hash value or digest. It is designed to be easy to compute the hash value from the input, but it is computationally infeasible to reverse the process and obtain the original input from the hash value. This property makes it useful for authentication and integrity verification, as it allows us to verify that a message has not been tampered with without revealing the original message.
+2. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
+    - To guarantee the integrity of the message, we can use a hash function to generate a hash value of the message, and then send the hash value along with the message. The receiver can then generate a hash value of the received message and compare it with the received hash value to verify the integrity of the message. There are different versions of SHA, such as SHA-1, SHA-256, and SHA-3, each with different hash lengths and security properties. However, it is important to note that some versions of SHA, such as SHA-1, are no longer considered secure due to vulnerabilities that have been discovered.
+    - [Collision attack - Wikipedia](https://en.wikipedia.org/wiki/Collision_attack)
 
 # 3. Key, Random Number and Advanced Technology
 
