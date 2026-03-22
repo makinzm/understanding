@@ -182,6 +182,13 @@ There are four main methods to share the key:
 
 # 3. Key, Random Number and Advanced Technology
 
+- [Glossary of cryptographic keys - Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_cryptographic_keys)
+    - CEK, KEK, MK, DEK, KDK, KSK, ZSK, etc.
+- RNG: [Random number generation - Wikipedia](https://en.wikipedia.org/wiki/Random_number_generation)
+    - To generate cryptographic keys and other random values, we can use a random number generator (RNG). An RNG is a device or algorithm that produces a sequence of numbers that cannot be reasonably predicted. In cryptography, it is important to use a cryptographically secure RNG (CSPRNG) to ensure the unpredictability of the generated values. A CSPRNG is designed to be resistant to certain types of attacks, such as state compromise or backtracking attacks, which can allow an attacker to predict future values or recover past values. It is important to use a well-known and widely used CSPRNG, such as the ones provided by cryptographic libraries, to ensure the security of the generated values.
+- PBE (Password-Based Encryption): [Password-based encryption - Wikipedia](https://en.wikipedia.org/wiki/Password-based_encryption)
+    - To derive a cryptographic key from a password, we can use password-based encryption (PBE). PBE is a method of encrypting data using a password as the key. It typically involves using a key derivation function (KDF) to derive a cryptographic key from the password, and then using that key to encrypt the data. This approach can be useful for encrypting data that needs to be protected with a user-friendly password, such as files or messages. However, it is important to use a strong KDF and to choose a strong password to prevent brute-force attacks or dictionary attacks on the password.
+    - [Key derivation function - Wikipedia](https://en.wikipedia.org/wiki/Key_derivation_function)
 
 # Other Topics
 
