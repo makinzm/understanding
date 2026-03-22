@@ -153,11 +153,6 @@ There are four main methods to share the key:
     - It is a mode of operation for a block cipher that allows encryption of data in units smaller than the block size. It works by encrypting the previous ciphertext block and then XORing it with the current plaintext block to produce the current ciphertext block. This mode provides better security than ECB because it can hide patterns in the plaintext and allows for encryption of data in smaller units. However, it is still vulnerable to certain attacks, such as replay attacks or bit-flipping attacks for IV.
 6. CTR (Counter): [Counter mode - Wikipedia](https://en.wikipedia.org/wiki/Counter_mode)
     - It is a mode of operation for a block cipher that allows encryption of data in units smaller than the block size. It works by encrypting a counter value, called a nonce, and then XORing it with the current plaintext block to produce the current ciphertext block. This mode provides better security than ECB because it can hide patterns in the plaintext and allows for encryption of data in smaller units. However, it is still vulnerable to certain attacks, such as replay attacks or bit-flipping attacks for IV.
-  
-## Other Topics
-
-- [CRYPTREC | トップページ](https://www.cryptrec.go.jp/index.html)
-    - CRYPTREC (Cryptography Research and Evaluation Committees) is a project that evaluates and recommends cryptographic algorithms for use in Japan. It provides a list of recommended algorithms for different purposes, such as encryption, hashing, and digital signatures.
 
 # 2. Authentication
 
@@ -166,6 +161,26 @@ There are four main methods to share the key:
 2. Hash: SHA (Secure Hash Algorithm): [Secure Hash Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm)
     - To guarantee the integrity of the message, we can use a hash function to generate a hash value of the message, and then send the hash value along with the message. The receiver can then generate a hash value of the received message and compare it with the received hash value to verify the integrity of the message. There are different versions of SHA, such as SHA-1, SHA-256, and SHA-3, each with different hash lengths and security properties. However, it is important to note that some versions of SHA, such as SHA-1, are no longer considered secure due to vulnerabilities that have been discovered.
     - [Collision attack - Wikipedia](https://en.wikipedia.org/wiki/Collision_attack)
+3. Message Authentication Code (MAC): [Message Authentication Code - Wikipedia](https://en.wikipedia.org/wiki/Message_authentication_code)
+    - To provide authentication and integrity, we can use a message authentication code (MAC) to generate a hash value of the message along with a secret key. The sender generates the MAC using the secret key and sends it along with the message. The receiver can then generate the MAC using the same secret key and compare it with the received MAC to verify the authenticity and integrity of the message. There are different types of MACs, such as HMAC (Hash-based Message Authentication Code) and CMAC (Cipher-based Message Authentication Code), each with different security properties.
+    - [HMAC - Wikipedia](https://en.wikipedia.org/wiki/HMAC)
+    - [CMAC - Wikipedia](https://en.wikipedia.org/wiki/CMAC)
+4. Encrypt then MAC: [Encrypt-then-MAC - Wikipedia](https://en.wikipedia.org/wiki/Encrypt-then-MAC)
+    - To provide confidentiality, authentication, and integrity, we can use the encrypt-then-MAC approach. In this approach, the sender first encrypts the message using a symmetric encryption algorithm, and then generates a MAC of the ciphertext using a secret key. The sender sends both the ciphertext and the MAC to the receiver. The receiver can then verify the authenticity and integrity of the message by generating a MAC of the received ciphertext using the same secret key and comparing it with the received MAC. If the MACs match, the receiver can then decrypt the ciphertext to obtain the original message. This is more secure than the MAC-then-encrypt approach because it ensures that the integrity of the message is verified before decryption, which can help prevent certain types of attacks, such as padding oracle attacks or bit-flipping attacks for IV.
+    - [Padding oracle attack - Wikipedia](https://en.wikipedia.org/wiki/Padding_oracle_attack)
+5. AEAD (Authenticated Encryption with Associated Data): [Authenticated encryption - Wikipedia](https://en.wikipedia.org/wiki/Authenticated_encryption)
+    - To provide confidentiality, authentication, and integrity, we can use authenticated encryption with associated data (AEAD). In this approach, the sender encrypts the message using a symmetric encryption algorithm and generates a MAC of the ciphertext and any associated data using a secret key. The sender sends both the ciphertext and the MAC to the receiver. The receiver can then verify the authenticity and integrity of the message by generating a MAC of the received ciphertext and associated data using the same secret key and comparing it with the received MAC. If the MACs match, the receiver can then decrypt the ciphertext to obtain the original message. This approach is more secure than encrypt-then-MAC because it allows for additional data to be authenticated along with the message, which can help prevent certain types of attacks, such as replay attacks or bit-flipping attacks for IV.
+    - [Replay attack - Wikipedia](https://en.wikipedia.org/wiki/Replay_attack)
+    - [Bit-flipping attack - Wikipedia](https://en.wikipedia.org/wiki/Bit-flipping_attack)
 
 # 3. Key, Random Number and Advanced Technology
 
+
+# Other Topics
+
+- [CRYPTREC | トップページ](https://www.cryptrec.go.jp/index.html)
+    - CRYPTREC (Cryptography Research and Evaluation Committees) is a project that evaluates and recommends cryptographic algorithms for use in Japan. It provides a list of recommended algorithms for different purposes, such as encryption, hashing, and digital signatures.
+- [Swift](https://www.swift.com/)
+    - Swift is a global provider of secure financial messaging services. It provides a platform for financial institutions to exchange information securely and efficiently. Swift also provides a range of security services, such as encryption and authentication, to protect the confidentiality and integrity of financial messages.
+- [IPsec - Wikipedia](https://ja.wikipedia.org/wiki/IPsec)
+    - IPsec (Internet Protocol Security) is a suite of protocols that provides secure communication over IP networks. It uses encryption and authentication to protect the confidentiality and integrity of data transmitted over the network. IPsec can be used to create virtual private networks (VPNs) and to secure communication between different networks.
