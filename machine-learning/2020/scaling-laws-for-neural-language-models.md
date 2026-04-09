@@ -127,6 +127,21 @@ $$L_\text{transfer} \approx L_\text{train} + \delta$$
 
 where $\delta$ is a positive constant offset specific to the distribution pair. The offset does not depend on model size, meaning the scaling exponents on transfer distributions match those on the training distribution. **All scaling laws hold across distribution shift**, implying that improved in-distribution performance reliably predicts improved out-of-distribution performance.
 
+# Sample Efficiency and Early Stopping
+
+A key finding is that **larger models are more sample-efficient**: they reach the same loss level with fewer gradient steps and fewer tokens than smaller models. This has a practical implication — compute-efficient training stops well before convergence.
+
+**Early stopping lower bound:**
+
+$$S_\text{stop}(N, D) \gtrsim \frac{S_c}{\left[L(N, D) - L(N, \infty)\right]^{1/\alpha_S}}$$
+
+where $L(N, \infty)$ is the infinite-data loss for model size $N$. Training should stop when this bound is saturated — that is, when further steps yield diminishing returns given the dataset size constraint.
+
+> [!IMPORTANT]
+> "When working within a fixed compute budget, we attain optimal performance by training very large models and stopping significantly short of convergence." This is the key operational takeaway: do not wait for loss curves to flatten; instead, use a larger model and stop early.
+
+**Context length:** Models are trained with $n_\text{ctx} = 1024$ tokens. Larger Transformers handle long contexts more effectively — they show improved loss on later token positions within a context, while LSTMs match Transformer performance early in context but diverge on later tokens (beyond ~100 tokens).
+
 # Comparison with Related Work
 
 | Aspect | This work | Prior work |
