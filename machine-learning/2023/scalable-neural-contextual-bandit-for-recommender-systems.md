@@ -1,7 +1,7 @@
 # Meta Information
 
 - URL: [Scalable Neural Contextual Bandit for Recommender Systems](https://arxiv.org/abs/2306.14834)
-- LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
+- LICENSE: [ Deed - Attribution 4.0 International - Creative Commons ]( https://creativecommons.org/licenses/by/4.0/ )
 - Reference: Zhu, Z., & Van Roy, B. (2023). Scalable Neural Contextual Bandit for Recommender Systems. arXiv:2306.14834.
 
 # Scalable Neural Contextual Bandit for Recommender Systems
