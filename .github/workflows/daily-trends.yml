@@ -3,7 +3,8 @@ name: Daily AI & Tech Trends
 on:
   schedule:
     # Runs automatically at 21:00 UTC = 6:00 AM JST (next day)
-    - cron: '0 21 * * *'
+    # Trend per 3 days to avoid overwhelming with too much information
+    - cron: '0 21 */3 * *'
 
   # Allow manual/ad-hoc execution
   # To trigger manually:
