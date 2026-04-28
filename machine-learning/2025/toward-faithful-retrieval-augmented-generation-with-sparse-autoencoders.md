@@ -1,7 +1,7 @@
 # Meta Information
 
 - URL: [Toward Faithful Retrieval-Augmented Generation with Sparse Autoencoders](https://arxiv.org/abs/2512.08892)
-- LICENSE: [arXiv.org - Non-exclusive license to distribute](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html)
+- LICENSE: [Deed - Attribution 4.0 International - Creative Commons](https://creativecommons.org/licenses/by/4.0/)
 - Reference: Xiong, G., He, Z., Liu, B., Sinha, S., & Zhang, A. (2025). Toward Faithful Retrieval-Augmented Generation with Sparse Autoencoders. arXiv:2512.08892.
 
 # RAGLens: Faithful Retrieval-Augmented Generation with Sparse Autoencoders
@@ -238,4 +238,4 @@ Counterfactual validation confirmed these features respond to RAG-specific groun
 
 ## Code
 
-Implementation: [https://github.com/Teddy-XiongGZ/RAGLens](https://github.com/Teddy-XiongGZ/RAGLens)
+Implementation: [gzxiong/RAGLens: ICLR 2026](https://github.com/gzxiong/RAGLens)
