@@ -76,6 +76,10 @@ A key insight is that a **shopping bag** (a single receipt with multiple items) 
 
 bagged-prod2vec modifies the training to treat each receipt as an **unordered bag**: for a receipt $r = \{p_1, \ldots, p_k\}$, every product in the bag serves as context for every other product in the bag (window covers all items regardless of position).
 
+$$
+\mathcal{L}_{\text{bagged}} = \sum_{s \in \mathcal{S}} \sum_{e_m \in s} \sum_{p_{mk} \in e_m} \sum_{-n \leq j \leq n,, j \neq 0} \sum_{p \in e_{m+j}} \log P(p \mid p_{mk})
+$$
+
 > [!NOTE]
 > "Unlike prod2vec where each purchase is assigned a specific position within the sequence, in the bagged version each product is taken as context of every other product within the same shopping bag."
 
@@ -86,6 +90,14 @@ This more accurately reflects co-purchase semantics: buying a printer and ink ca
 To generate **user-level** embeddings for cold-start and long-term preference modeling, user2vec introduces a user vector $\mathbf{u}_{\text{user}} \in \mathbb{R}^d$ that replaces the center-product vector in the skip-gram objective. The model predicts the products a user purchases from their latent user representation.
 
 **Difference from prod2vec:** prod2vec predicts neighboring products given a product; user2vec predicts all purchased products given a user vector.
+
+$$
+\mathcal{L}_{\text{user2vec}} = \sum_{m=1}^{M} \sum_{n=1}^{N_m} \log P\big(p_{mn} \mid u_m, p_{m,n-c}, \ldots, p_{m,n-1}\big)
+$$
+
+$$
+P(p_{mn} \mid u_m, \text{context}) = \frac{\exp\big(v_{p_{mn}}^\top h_{mn}\big)}{\sum_{p \in V} \exp\big(v_{p}^\top h_{mn}\big)}, \qquad h_{mn} = \tfrac{1}{2c+1}\Big(u_m + \sum_{t=1}^{c} v_{p_{m,n-t}}\Big)
+$$
 
 ---
 
@@ -111,6 +123,9 @@ $$
 $$
 
 where $\alpha = 0.9$ is the decay factor and $\Delta t_i$ is time since purchase $p_i$ in days. This rewards products that are (a) semantically similar to recent purchases and (b) in clusters frequently visited after current clusters.
+
+> [!NOTE]
+> This is not novelity but diversity. The cluster transition probabilities encourage recommendations that are not just close neighbors of the query product but also belong to clusters that users commonly transition to, improving recommendation diversity without sacrificing relevance.
 
 ---
 
