@@ -117,15 +117,27 @@ Procedure EigenPlaces_ClassConstruct(X_i, D):
 
 For each loss component (lateral or frontal), the normalised class weight matrix $W \in \mathbb{R}^{d \times C}$ (one column per training class) is maintained. For a sample $x_i$ with ground-truth class $y_i$:
 
-$$\cos\theta_j = W_j^\top x_i, \quad W = \frac{W^*}{\|W^*\|}, \quad x = \frac{x^*}{\|x^*\|}$$
+```math
+\begin{align}
+  \cos\theta_j = W_j^\top x_i, \quad W = \frac{W^*}{\|W^*\|}, \quad x = \frac{x^*}{\|x^*\|}
+\end{align}
+```
 
-$$\mathcal{L}_\text{lat} = \frac{1}{N} \sum_i -\log \frac{e^{s(\cos\theta_{y_i} - m)}}{e^{s(\cos\theta_{y_i} - m)} + \sum_{j \neq y_i} e^{s\cos\theta_j}}$$
+```math
+\begin{align}
+  \mathcal{L}_\text{lat} = \frac{1}{N} \sum_i -\log \frac{e^{s(\cos\theta_{y_i} - m)}}{e^{s(\cos\theta_{y_i} - m)} + \sum_{j \neq y_i} e^{s\cos\theta_j}}
+\end{align}
+```
 
 where $s$ is a scale factor and $m > 0$ is a cosine margin that enforces inter-class separation.
 
 **Combined loss.** Each cell produces two classes; two CosFace classifiers ($W_\text{lat}$, $W_\text{front}$) are trained jointly:
 
-$$\mathcal{L} = \mathcal{L}_\text{lat}(f, W_\text{lat}) + \mathcal{L}_\text{front}(f, W_\text{front})$$
+```math
+\begin{align}
+  \mathcal{L} = \mathcal{L}_\text{lat}(f, W_\text{lat}) + \mathcal{L}_\text{front}(f, W_\text{front})
+\end{align}
+```
 
 **Training hyperparameters.**
 
