@@ -15,7 +15,11 @@ Modern GPUs (e.g., NVIDIA A100) have a two-level memory hierarchy:
 
 The standard attention computation for a single head is:
 
-$$S = QK^\top \in \mathbb{R}^{N \times N}, \quad P = \text{softmax}(S) \in \mathbb{R}^{N \times N}, \quad O = PV \in \mathbb{R}^{N \times d}$$
+```math
+\begin{align}
+  S = QK^\top \in \mathbb{R}^{N \times N}, \quad P = \text{softmax}(S) \in \mathbb{R}^{N \times N}, \quad O = PV \in \mathbb{R}^{N \times d}
+\end{align}
+```
 
 where $Q, K, V \in \mathbb{R}^{N \times d}$ are the query, key, and value matrices, $N$ is the sequence length, and $d$ is the head dimension.
 
@@ -33,14 +37,23 @@ FlashAttention avoids materializing the full attention matrix by:
 
 To compute softmax block-by-block without access to global statistics, FlashAttention maintains the following statistics:
 
-$$m(x) := \max_i x_i, \quad f(x) := \left[e^{x_1 - m(x)}, \ldots, e^{x_B - m(x)}\right], \quad \ell(x) := \sum_i f(x)_i$$
-
-$$\text{softmax}(x) := \frac{f(x)}{\ell(x)}$$
+```math
+\begin{align}
+  m(x) &:= \max_i x_i \\
+  f(x) &:= \left[e^{x_1 - m(x)}, \ldots, e^{x_B - m(x)}\right] \\
+  \ell(x) &:= \sum_i f(x)_i \\
+  \text{softmax}(x) &:= \frac{f(x)}{\ell(x)}
+\end{align}
+```
 
 For two concatenated vectors $x = [x^{(1)}, x^{(2)}]$, these statistics compose as:
 
-$$m(x) = \max(m(x^{(1)}), m(x^{(2)}))$$
-$$\ell(x) = e^{m(x^{(1)}) - m(x)} \ell(x^{(1)}) + e^{m(x^{(2)}) - m(x)} \ell(x^{(2)})$$
+```math
+\begin{align}
+  m(x) &= \max(m(x^{(1)}), m(x^{(2)})) \\
+  \ell(x) &= e^{m(x^{(1)}) - m(x)} \ell(x^{(1)}) + e^{m(x^{(2)}) - m(x)} \ell(x^{(2)})
+\end{align}
+```
 
 This allows correct softmax computation across blocks by carrying forward running statistics $(m, \ell)$.
 
@@ -48,7 +61,11 @@ This allows correct softmax computation across blocks by carrying forward runnin
 
 **Block sizes** chosen to fit in SRAM of size $M$:
 
-$$B_c = \left\lceil \frac{M}{4d} \right\rceil, \quad B_r = \min\left(\left\lceil \frac{M}{4d} \right\rceil, d\right)$$
+```math
+\begin{align}
+  B_c = \left\lceil \frac{M}{4d} \right\rceil, \quad B_r = \min\left(\left\lceil \frac{M}{4d} \right\rceil, d\right)
+\end{align}
+```
 
 **Algorithm (Forward Pass)**:
 
@@ -88,11 +105,21 @@ Instead of storing the $O(N^2)$ attention matrices $S$ and $P$, FlashAttention s
 
 During the backward pass, the attention weights are **recomputed on-chip** from the saved $Q, K$ blocks. The three gradient components are:
 
-$$dV = P^\top dO, \quad dQ = P \cdot dS_{\text{rows}}, \quad dK = P^\top \cdot dS_{\text{cols}}$$
+```math
+\begin{align}
+  dV &= P^\top dO \\
+  dQ &= P \cdot dS_{\text{rows}} \\
+  dK &= P^\top \cdot dS_{\text{cols}}
+\end{align}
+```
 
 where $dS$ is the gradient through the softmax, computed as:
 
-$$dS_{ij} = P_{ij} \left(dP_{ij} - \sum_k dP_{ik} P_{ik}\right)$$
+```math
+\begin{align}
+  dS_{ij} = P_{ij} \left(dP_{ij} - \sum_k dP_{ik} P_{ik}\right)
+\end{align}
+```
 
 > [!IMPORTANT]
 > The backward pass performs strictly more FLOPs than the standard approach (due to recomputation), yet runs faster because HBM accesses dominate total runtime on modern hardware.
@@ -114,7 +141,11 @@ For $d = 64$, $M = 100\,\text{KB}$ (in elements), the reduction factor is approx
 
 For approximate attention with a sparsity mask $\tilde{M} \in \{0,1\}^{N/B_r \times N/B_c}$ with fraction $s$ of nonzero blocks:
 
-$$\text{HBM accesses} = \Theta\left(Nd + N^2 d^2 M^{-1} s\right)$$
+```math
+\begin{align}
+  \text{HBM accesses} = \Theta\left(Nd + N^2 d^2 M^{-1} s\right)
+\end{align}
+```
 
 The algorithm skips loading blocks that are masked out, achieving proportional speedup to sparsity level while maintaining exact arithmetic on retained blocks.
 
