@@ -144,8 +144,10 @@ def fetch_hatena():
     bookmarks = []
 
     categories = [
-        ("https://b.hatena.ne.jp/hotentry/it", "Tech"),
+        ("https://b.hatena.ne.jp/hotentry/it.rss", "Tech"),
     ]
+    # Hatena hotentry RSS is RSS 1.0 (RDF), whose elements live in the default namespace
+    RSS1_NS = {"rss": "http://purl.org/rss/1.0/"}
 
     for url, category in categories:
         time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
@@ -157,16 +159,16 @@ def fetch_hatena():
 
         try:
             root = ET.fromstring(xml_content)
-            for item in root.findall(".//item"):
-                title_elem = item.find("title")
-                link_elem = item.find("link")
+            for item in root.findall("rss:item", RSS1_NS):
+                title_elem = item.find("rss:title", RSS1_NS)
+                link_elem = item.find("rss:link", RSS1_NS)
 
                 if title_elem is not None and link_elem is not None:
                     title = title_elem.text or ""
                     link = link_elem.text or ""
 
                     # Try to extract bookmark count from description
-                    desc_elem = item.find("description")
+                    desc_elem = item.find("rss:description", RSS1_NS)
                     bookmarks_count = 10  # Default
 
                     if desc_elem is not None and desc_elem.text:
@@ -239,7 +241,7 @@ def fetch_wiz_blog():
             if title_elem is None:
                 continue
 
-            title = (title_elem.text or "").strip().lstrip("<![CDATA[").rstrip("]]>")
+            title = (title_elem.text or "").strip()
             # <link> in Atom may use href attribute instead of text
             if link_elem is not None:
                 url = (link_elem.text or link_elem.get("href") or "").strip()
@@ -269,6 +271,7 @@ def fetch_arxiv_csLG():
     Fetches a single page to respect crawl-delay; sleeps 15 s before request.
     """
     import re
+    import html as html_module
 
     print("[5/5] Fetching arXiv cs.LG/recent...", flush=True)
     papers = []
@@ -282,15 +285,17 @@ def fetch_arxiv_csLG():
     # <dt> contains the sequence number and arXiv ID link.
     # <dd> contains title (class="list-title"), authors, and subjects.
     dt_dd_re = re.compile(r"<dt>(.*?)</dt>\s*<dd>(.*?)</dd>", re.DOTALL)
-    id_re = re.compile(r'href="/abs/(\d{4}\.\d{4,5})"')
-    # Title: <div class="list-title mathjax"><span class="descriptor">Title:</span>\nPAPER TITLE</div>
+    # arXiv listing markup uses single quotes for attributes and sometimes a
+    # space before "=" (e.g. `href ="/abs/..."`), so match either quote style.
+    id_re = re.compile(r'href\s*=\s*["\']/abs/(\d{4}\.\d{4,5})["\']')
+    # Title: <div class='list-title mathjax'><span class='descriptor'>Title:</span>\nPAPER TITLE</div>
     title_re = re.compile(
-        r'class="list-title[^"]*"[^>]*>.*?class="descriptor"[^>]*>.*?</span>\s*(.*?)\s*</div>',
+        r'class\s*=\s*["\']list-title[^"\']*["\'][^>]*>.*?class\s*=\s*["\']descriptor["\'][^>]*>.*?</span>\s*(.*?)\s*</div>',
         re.DOTALL | re.IGNORECASE,
     )
-    # Subjects: <span class="primary-subject">Machine Learning (cs.LG)</span>
+    # Subjects: <span class='primary-subject'>Machine Learning (cs.LG)</span>
     subject_re = re.compile(
-        r'class="primary-subject"[^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
+        r'class\s*=\s*["\']primary-subject["\'][^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
     )
     tag_re = re.compile(r"<[^>]+>")
 
@@ -308,11 +313,11 @@ def fetch_arxiv_csLG():
         title_match = title_re.search(dd_content)
         if not title_match:
             continue
-        title = re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip()
+        title = html_module.unescape(re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip())
 
         # Extract primary subject
         subj_match = subject_re.search(dd_content)
-        subjects = re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip() if subj_match else ""
+        subjects = html_module.unescape(re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip()) if subj_match else ""
 
         papers.append({
             "arxiv_id": arxiv_id,
