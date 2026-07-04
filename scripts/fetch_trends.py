@@ -5,11 +5,17 @@ Fetches data from Hacker News, Reddit, and Hatena Bookmark with proper rate limi
 """
 
 import json
+import sys
 import time
 import urllib.request
 import urllib.error
 from datetime import datetime
 from xml.etree import ElementTree as ET
+
+
+def log(message):
+    """Print progress messages to stderr so stdout stays valid JSON when redirected."""
+    print(message, file=sys.stderr, flush=True)
 
 # User-Agent strings
 HN_UA = "Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)"
@@ -28,7 +34,7 @@ def fetch_json(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return json.loads(response.read().decode())
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        log(f"Error fetching {url}: {e}")
         return None
 
 
@@ -39,13 +45,13 @@ def fetch_text(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.read().decode()
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        log(f"Error fetching {url}: {e}")
         return None
 
 
 def fetch_hacker_news():
     """Fetch Hacker News top stories with 50+ points"""
-    print("[1/5] Fetching Hacker News...", flush=True)
+    log("[1/5] Fetching Hacker News...")
     stories = []
 
     # Get top story IDs
@@ -75,13 +81,13 @@ def fetch_hacker_news():
                 }
             )
 
-    print(f"  → Fetched {len(stories)} stories", flush=True)
+    log(f"  → Fetched {len(stories)} stories")
     return stories
 
 
 def fetch_reddit():
     """Fetch Reddit posts from AI, Tech, and General subreddits"""
-    print("[2/5] Fetching Reddit...", flush=True)
+    log("[2/5] Fetching Reddit...")
     posts = []
 
     # AI-focused (60% weight)
@@ -105,7 +111,7 @@ def fetch_reddit():
     ]:
         for sub in sub_list:
             time.sleep(1)  # 1-second delay between requests
-            print(f"  → Fetching r/{sub}...", flush=True)
+            log(f"  → Fetching r/{sub}...")
 
             data = fetch_json(
                 f"https://old.reddit.com/r/{sub}/hot.json?limit=25", REDDIT_UA
@@ -134,22 +140,22 @@ def fetch_reddit():
                         }
                     )
 
-    print(f"  → Fetched {len(posts)} posts", flush=True)
+    log(f"  → Fetched {len(posts)} posts")
     return posts
 
 
 def fetch_hatena():
     """Fetch Hatena Bookmark hot entries from RSS feeds"""
-    print("[3/5] Fetching Hatena Bookmark...", flush=True)
+    log("[3/5] Fetching Hatena Bookmark...")
     bookmarks = []
 
     categories = [
-        ("https://b.hatena.ne.jp/hotentry/it", "Tech"),
+        ("https://b.hatena.ne.jp/hotentry/it.rss", "Tech"),
     ]
 
     for url, category in categories:
         time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
-        print(f"  → Fetching {url}...", flush=True)
+        log(f"  → Fetching {url}...")
 
         xml_content = fetch_text(url, HATENA_UA)
         if not xml_content:
@@ -157,28 +163,24 @@ def fetch_hatena():
 
         try:
             root = ET.fromstring(xml_content)
-            for item in root.findall(".//item"):
-                title_elem = item.find("title")
-                link_elem = item.find("link")
+            # This feed is RSS 1.0 (RDF): <item>, <title>, <link> live in the
+            # default namespace declared on <rdf:RDF>, and the bookmark count
+            # is a dedicated <hatena:bookmarkcount> element, not free text.
+            RSS_NS = "http://purl.org/rss/1.0/"
+            HATENA_NS = "http://www.hatena.ne.jp/info/xmlns#"
+
+            for item in root.findall(f".//{{{RSS_NS}}}item"):
+                title_elem = item.find(f"{{{RSS_NS}}}title")
+                link_elem = item.find(f"{{{RSS_NS}}}link")
+                count_elem = item.find(f"{{{HATENA_NS}}}bookmarkcount")
 
                 if title_elem is not None and link_elem is not None:
                     title = title_elem.text or ""
                     link = link_elem.text or ""
+                    bookmarks_count = int(count_elem.text) if count_elem is not None and count_elem.text else 0
 
-                    # Try to extract bookmark count from description
-                    desc_elem = item.find("description")
-                    bookmarks_count = 10  # Default
-
-                    if desc_elem is not None and desc_elem.text:
-                        # Simple heuristic: look for numbers in description
-                        import re
-
-                        numbers = re.findall(r"\d+", desc_elem.text)
-                        if numbers:
-                            bookmarks_count = int(numbers[0])
-
-                    # Filter: 10+ bookmarks (or just include all from hot entries)
-                    if bookmarks_count >= 10 or link:
+                    # Filter: 10+ bookmarks
+                    if bookmarks_count >= 10:
                         bookmarks.append(
                             {
                                 "title": title,
@@ -189,10 +191,10 @@ def fetch_hatena():
                             }
                         )
         except Exception as e:
-            print(f"  Error parsing XML: {e}", flush=True)
+            log(f"  Error parsing XML: {e}")
             continue
 
-    print(f"  → Fetched {len(bookmarks)} bookmarks", flush=True)
+    log(f"  → Fetched {len(bookmarks)} bookmarks")
     return bookmarks
 
 
@@ -201,7 +203,7 @@ def fetch_wiz_blog():
     robots.txt: Allow: / for all agents (no restrictions, no Crawl-delay).
     Uses RSS feed at https://www.wiz.io/feed/rss.xml for reliable parsing.
     """
-    print("[4/5] Fetching Wiz Blog...", flush=True)
+    log("[4/5] Fetching Wiz Blog...")
     articles = []
 
     xml_content = fetch_text("https://www.wiz.io/feed/rss.xml", WIZ_UA)
@@ -239,7 +241,12 @@ def fetch_wiz_blog():
             if title_elem is None:
                 continue
 
-            title = (title_elem.text or "").strip().lstrip("<![CDATA[").rstrip("]]>")
+            # ElementTree already unwraps CDATA sections into .text, so no
+            # further stripping of "<![CDATA[" markers is needed here — doing
+            # it with lstrip/rstrip (which strip character *sets*, not a
+            # literal prefix/suffix) was eating real leading letters like the
+            # "A" in "AI" or the "T" in "The".
+            title = (title_elem.text or "").strip()
             # <link> in Atom may use href attribute instead of text
             if link_elem is not None:
                 url = (link_elem.text or link_elem.get("href") or "").strip()
@@ -257,9 +264,13 @@ def fetch_wiz_blog():
                     "source": "WizBlog",
                 })
     except Exception as e:
-        print(f"  Error parsing Wiz RSS: {e}", flush=True)
+        log(f"  Error parsing Wiz RSS: {e}")
 
-    print(f"  → Fetched {len(articles)} articles", flush=True)
+    # Feed is newest-first and contains the blog's entire history (600+ entries);
+    # keep only the most recent ones for a "daily trends" snapshot.
+    articles = articles[:20]
+
+    log(f"  → Fetched {len(articles)} articles")
     return articles
 
 
@@ -268,33 +279,37 @@ def fetch_arxiv_csLG():
     robots.txt: Crawl-delay: 15 (User-agent: *), /list path is explicitly allowed.
     Fetches a single page to respect crawl-delay; sleeps 15 s before request.
     """
+    import html
     import re
 
-    print("[5/5] Fetching arXiv cs.LG/recent...", flush=True)
+    log("[5/5] Fetching arXiv cs.LG/recent...")
     papers = []
 
     time.sleep(15)  # Respect Crawl-delay: 15 per arxiv.org robots.txt
-    html = fetch_text("https://arxiv.org/list/cs.LG/recent", ARXIV_UA)
-    if not html:
+    page_html = fetch_text("https://arxiv.org/list/cs.LG/recent", ARXIV_UA)
+    if not page_html:
         return papers
 
     # arXiv listing pages use <dt>/<dd> pairs.
     # <dt> contains the sequence number and arXiv ID link.
     # <dd> contains title (class="list-title"), authors, and subjects.
+    # arxiv.org markup mixes single/double quotes and sometimes spaces around `=`
+    # (e.g. `href ="/abs/..."` or `class='list-title mathjax'`), so quote style
+    # and surrounding whitespace can't be assumed fixed.
     dt_dd_re = re.compile(r"<dt>(.*?)</dt>\s*<dd>(.*?)</dd>", re.DOTALL)
-    id_re = re.compile(r'href="/abs/(\d{4}\.\d{4,5})"')
-    # Title: <div class="list-title mathjax"><span class="descriptor">Title:</span>\nPAPER TITLE</div>
+    id_re = re.compile(r'href\s*=\s*[\'"]/abs/(\d{4}\.\d{4,5})[\'"]')
+    # Title: <div class='list-title mathjax'><span class='descriptor'>Title:</span>\nPAPER TITLE</div>
     title_re = re.compile(
-        r'class="list-title[^"]*"[^>]*>.*?class="descriptor"[^>]*>.*?</span>\s*(.*?)\s*</div>',
+        r'class\s*=\s*[\'"]list-title[^\'"]*[\'"][^>]*>.*?class\s*=\s*[\'"]descriptor[\'"][^>]*>.*?</span>\s*(.*?)\s*</div>',
         re.DOTALL | re.IGNORECASE,
     )
     # Subjects: <span class="primary-subject">Machine Learning (cs.LG)</span>
     subject_re = re.compile(
-        r'class="primary-subject"[^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
+        r'class\s*=\s*[\'"]primary-subject[\'"][^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
     )
     tag_re = re.compile(r"<[^>]+>")
 
-    for m in dt_dd_re.finditer(html):
+    for m in dt_dd_re.finditer(page_html):
         dt_content = m.group(1)
         dd_content = m.group(2)
 
@@ -308,11 +323,11 @@ def fetch_arxiv_csLG():
         title_match = title_re.search(dd_content)
         if not title_match:
             continue
-        title = re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip()
+        title = html.unescape(re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip())
 
         # Extract primary subject
         subj_match = subject_re.search(dd_content)
-        subjects = re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip() if subj_match else ""
+        subjects = html.unescape(re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip()) if subj_match else ""
 
         papers.append({
             "arxiv_id": arxiv_id,
@@ -322,13 +337,13 @@ def fetch_arxiv_csLG():
             "source": "arXiv_csLG",
         })
 
-    print(f"  → Fetched {len(papers)} papers", flush=True)
+    log(f"  → Fetched {len(papers)} papers")
     return papers
 
 
 def main():
     """Main function to fetch all trends data"""
-    print("=== Daily Trends Data Fetcher ===\n", flush=True)
+    log("=== Daily Trends Data Fetcher ===\n")
     start_time = time.time()
 
     # Fetch from all sources
@@ -357,9 +372,9 @@ def main():
     }
 
     elapsed = time.time() - start_time
-    print(f"\n=== Collection Complete ===", flush=True)
-    print(f"Total articles: {result['summary']['total']}", flush=True)
-    print(f"Time elapsed: {elapsed:.1f} seconds", flush=True)
+    log(f"\n=== Collection Complete ===")
+    log(f"Total articles: {result['summary']['total']}")
+    log(f"Time elapsed: {elapsed:.1f} seconds")
 
     # Output JSON
     print(json.dumps(result, indent=2, ensure_ascii=False))
