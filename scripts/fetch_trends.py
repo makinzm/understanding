@@ -5,11 +5,17 @@ Fetches data from Hacker News, Reddit, and Hatena Bookmark with proper rate limi
 """
 
 import json
+import sys
 import time
 import urllib.request
 import urllib.error
-from datetime import datetime
+from datetime import datetime, timezone
 from xml.etree import ElementTree as ET
+
+
+def log(message):
+    """Print progress/diagnostic messages to stderr so stdout stays pure JSON."""
+    print(message, file=sys.stderr, flush=True)
 
 # User-Agent strings
 HN_UA = "Mozilla/5.0 (compatible; TrendBot/1.0; +https://github.com/understanding/trends)"
@@ -28,7 +34,7 @@ def fetch_json(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return json.loads(response.read().decode())
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        log(f"Error fetching {url}: {e}")
         return None
 
 
@@ -39,13 +45,13 @@ def fetch_text(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.read().decode()
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        log(f"Error fetching {url}: {e}")
         return None
 
 
 def fetch_hacker_news():
     """Fetch Hacker News top stories with 50+ points"""
-    print("[1/5] Fetching Hacker News...", flush=True)
+    log("[1/5] Fetching Hacker News...")
     stories = []
 
     # Get top story IDs
@@ -75,13 +81,13 @@ def fetch_hacker_news():
                 }
             )
 
-    print(f"  → Fetched {len(stories)} stories", flush=True)
+    log(f"  → Fetched {len(stories)} stories")
     return stories
 
 
 def fetch_reddit():
     """Fetch Reddit posts from AI, Tech, and General subreddits"""
-    print("[2/5] Fetching Reddit...", flush=True)
+    log("[2/5] Fetching Reddit...")
     posts = []
 
     # AI-focused (60% weight)
@@ -105,7 +111,7 @@ def fetch_reddit():
     ]:
         for sub in sub_list:
             time.sleep(1)  # 1-second delay between requests
-            print(f"  → Fetching r/{sub}...", flush=True)
+            log(f"  → Fetching r/{sub}...")
 
             data = fetch_json(
                 f"https://old.reddit.com/r/{sub}/hot.json?limit=25", REDDIT_UA
@@ -134,22 +140,22 @@ def fetch_reddit():
                         }
                     )
 
-    print(f"  → Fetched {len(posts)} posts", flush=True)
+    log(f"  → Fetched {len(posts)} posts")
     return posts
 
 
 def fetch_hatena():
     """Fetch Hatena Bookmark hot entries from RSS feeds"""
-    print("[3/5] Fetching Hatena Bookmark...", flush=True)
+    log("[3/5] Fetching Hatena Bookmark...")
     bookmarks = []
 
     categories = [
-        ("https://b.hatena.ne.jp/hotentry/it", "Tech"),
+        ("https://b.hatena.ne.jp/hotentry/it.rss", "Tech"),
     ]
 
     for url, category in categories:
         time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
-        print(f"  → Fetching {url}...", flush=True)
+        log(f"  → Fetching {url}...")
 
         xml_content = fetch_text(url, HATENA_UA)
         if not xml_content:
@@ -157,42 +163,51 @@ def fetch_hatena():
 
         try:
             root = ET.fromstring(xml_content)
-            for item in root.findall(".//item"):
-                title_elem = item.find("title")
-                link_elem = item.find("link")
+            # Hatena's hotentry feed is RSS 1.0 (RDF) and declares a default
+            # xmlns, so <item>/<title>/<link> parse as namespaced elements
+            # (e.g. "{http://purl.org/rss/1.0/}item") rather than bare tags.
+            # Match by local name (suffix after "}") to stay namespace-agnostic.
+            def local_name(tag):
+                return tag.rsplit("}", 1)[-1]
+
+            def find_child(elem, name):
+                for child in elem:
+                    if local_name(child.tag) == name:
+                        return child
+                return None
+
+            for item in root.iter():
+                if local_name(item.tag) != "item":
+                    continue
+                title_elem = find_child(item, "title")
+                link_elem = find_child(item, "link")
 
                 if title_elem is not None and link_elem is not None:
                     title = title_elem.text or ""
                     link = link_elem.text or ""
 
-                    # Try to extract bookmark count from description
-                    desc_elem = item.find("description")
-                    bookmarks_count = 10  # Default
-
-                    if desc_elem is not None and desc_elem.text:
-                        # Simple heuristic: look for numbers in description
-                        import re
-
-                        numbers = re.findall(r"\d+", desc_elem.text)
-                        if numbers:
-                            bookmarks_count = int(numbers[0])
-
-                    # Filter: 10+ bookmarks (or just include all from hot entries)
-                    if bookmarks_count >= 10 or link:
+                    # This RSS 1.0 feed has no dedicated bookmark-count
+                    # element — only title/link/description/date. Scanning
+                    # the description for digits is unreliable (it matches
+                    # unrelated numbers like dates within the article text),
+                    # so report the count as unknown (None) rather than
+                    # fabricating one. Inclusion in "hotentry" already
+                    # implies it cleared Hatena's own popularity threshold.
+                    if link:
                         bookmarks.append(
                             {
                                 "title": title,
                                 "url": link,
-                                "bookmarks": bookmarks_count,
+                                "bookmarks": None,
                                 "category": category,
                                 "source": "Hatena",
                             }
                         )
         except Exception as e:
-            print(f"  Error parsing XML: {e}", flush=True)
+            log(f"  Error parsing XML: {e}")
             continue
 
-    print(f"  → Fetched {len(bookmarks)} bookmarks", flush=True)
+    log(f"  → Fetched {len(bookmarks)} bookmarks")
     return bookmarks
 
 
@@ -201,7 +216,7 @@ def fetch_wiz_blog():
     robots.txt: Allow: / for all agents (no restrictions, no Crawl-delay).
     Uses RSS feed at https://www.wiz.io/feed/rss.xml for reliable parsing.
     """
-    print("[4/5] Fetching Wiz Blog...", flush=True)
+    log("[4/5] Fetching Wiz Blog...")
     articles = []
 
     xml_content = fetch_text("https://www.wiz.io/feed/rss.xml", WIZ_UA)
@@ -221,7 +236,11 @@ def fetch_wiz_blog():
                 ns = root.tag.split("}")[0] + "}"
             items = root.findall(f"{ns}entry")
 
-        for item in items:
+        # The feed contains the blog's full history (600+ posts), not just
+        # recent ones. It's ordered newest-first, so cap to the most recent
+        # entries to keep this a "daily trends" source rather than a full
+        # archive dump.
+        for item in items[:20]:
             # RSS 2.0 fields
             title_elem = item.find("title")
             link_elem = item.find("link")
@@ -239,7 +258,13 @@ def fetch_wiz_blog():
             if title_elem is None:
                 continue
 
-            title = (title_elem.text or "").strip().lstrip("<![CDATA[").rstrip("]]>")
+            # ElementTree already decodes CDATA sections into plain text, so
+            # no manual unwrapping is needed here. (A prior version called
+            # .lstrip("<![CDATA[") / .rstrip("]]>"), but str.strip family
+            # treats its argument as a character set, not a literal prefix —
+            # that silently ate real leading/trailing letters from titles,
+            # e.g. "The Wiz Red Agent..." became "he Wiz Red Agent...".
+            title = (title_elem.text or "").strip()
             # <link> in Atom may use href attribute instead of text
             if link_elem is not None:
                 url = (link_elem.text or link_elem.get("href") or "").strip()
@@ -257,9 +282,9 @@ def fetch_wiz_blog():
                     "source": "WizBlog",
                 })
     except Exception as e:
-        print(f"  Error parsing Wiz RSS: {e}", flush=True)
+        log(f"  Error parsing Wiz RSS: {e}")
 
-    print(f"  → Fetched {len(articles)} articles", flush=True)
+    log(f"  → Fetched {len(articles)} articles")
     return articles
 
 
@@ -268,9 +293,10 @@ def fetch_arxiv_csLG():
     robots.txt: Crawl-delay: 15 (User-agent: *), /list path is explicitly allowed.
     Fetches a single page to respect crawl-delay; sleeps 15 s before request.
     """
+    import html as html_module
     import re
 
-    print("[5/5] Fetching arXiv cs.LG/recent...", flush=True)
+    log("[5/5] Fetching arXiv cs.LG/recent...")
     papers = []
 
     time.sleep(15)  # Respect Crawl-delay: 15 per arxiv.org robots.txt
@@ -282,15 +308,18 @@ def fetch_arxiv_csLG():
     # <dt> contains the sequence number and arXiv ID link.
     # <dd> contains title (class="list-title"), authors, and subjects.
     dt_dd_re = re.compile(r"<dt>(.*?)</dt>\s*<dd>(.*?)</dd>", re.DOTALL)
-    id_re = re.compile(r'href="/abs/(\d{4}\.\d{4,5})"')
-    # Title: <div class="list-title mathjax"><span class="descriptor">Title:</span>\nPAPER TITLE</div>
+    # arXiv's listing HTML mixes single/double quotes and sometimes has a
+    # stray space before "=" (e.g. `href ="/abs/..."`), so quotes and
+    # whitespace around "=" must both be tolerated.
+    id_re = re.compile(r'href\s*=\s*["\']/abs/(\d{4}\.\d{4,5})["\']')
+    # Title: <div class='list-title mathjax'><span class='descriptor'>Title:</span>\nPAPER TITLE</div>
     title_re = re.compile(
-        r'class="list-title[^"]*"[^>]*>.*?class="descriptor"[^>]*>.*?</span>\s*(.*?)\s*</div>',
+        r'class=[\'"]list-title[^\'"]*[\'"][^>]*>.*?class=[\'"]descriptor[\'"][^>]*>.*?</span>\s*(.*?)\s*</div>',
         re.DOTALL | re.IGNORECASE,
     )
     # Subjects: <span class="primary-subject">Machine Learning (cs.LG)</span>
     subject_re = re.compile(
-        r'class="primary-subject"[^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
+        r'class=[\'"]primary-subject[\'"][^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
     )
     tag_re = re.compile(r"<[^>]+>")
 
@@ -308,11 +337,11 @@ def fetch_arxiv_csLG():
         title_match = title_re.search(dd_content)
         if not title_match:
             continue
-        title = re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip()
+        title = html_module.unescape(re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip())
 
         # Extract primary subject
         subj_match = subject_re.search(dd_content)
-        subjects = re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip() if subj_match else ""
+        subjects = html_module.unescape(re.sub(r"\s+", " ", tag_re.sub("", subj_match.group(1))).strip()) if subj_match else ""
 
         papers.append({
             "arxiv_id": arxiv_id,
@@ -322,13 +351,13 @@ def fetch_arxiv_csLG():
             "source": "arXiv_csLG",
         })
 
-    print(f"  → Fetched {len(papers)} papers", flush=True)
+    log(f"  → Fetched {len(papers)} papers")
     return papers
 
 
 def main():
     """Main function to fetch all trends data"""
-    print("=== Daily Trends Data Fetcher ===\n", flush=True)
+    log("=== Daily Trends Data Fetcher ===\n")
     start_time = time.time()
 
     # Fetch from all sources
@@ -340,7 +369,7 @@ def main():
 
     # Combine results
     result = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "hacker_news": hn_stories,
         "reddit": reddit_posts,
         "hatena": hatena_bookmarks,
@@ -357,9 +386,9 @@ def main():
     }
 
     elapsed = time.time() - start_time
-    print(f"\n=== Collection Complete ===", flush=True)
-    print(f"Total articles: {result['summary']['total']}", flush=True)
-    print(f"Time elapsed: {elapsed:.1f} seconds", flush=True)
+    log(f"\n=== Collection Complete ===")
+    log(f"Total articles: {result['summary']['total']}")
+    log(f"Time elapsed: {elapsed:.1f} seconds")
 
     # Output JSON
     print(json.dumps(result, indent=2, ensure_ascii=False))
