@@ -4,6 +4,7 @@ Daily Trends Data Fetcher
 Fetches data from Hacker News, Reddit, and Hatena Bookmark with proper rate limiting
 """
 
+import html
 import json
 import time
 import urllib.request
@@ -144,8 +145,11 @@ def fetch_hatena():
     bookmarks = []
 
     categories = [
-        ("https://b.hatena.ne.jp/hotentry/it", "Tech"),
+        ("https://b.hatena.ne.jp/hotentry/it.rss", "Tech"),
     ]
+    # RSS 1.0/RDF namespaces used by the Hatena Bookmark feed
+    RSS_NS = "http://purl.org/rss/1.0/"
+    HATENA_NS = "http://www.hatena.ne.jp/info/xmlns#"
 
     for url, category in categories:
         time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
@@ -157,25 +161,17 @@ def fetch_hatena():
 
         try:
             root = ET.fromstring(xml_content)
-            for item in root.findall(".//item"):
-                title_elem = item.find("title")
-                link_elem = item.find("link")
+            for item in root.findall(f"{{{RSS_NS}}}item"):
+                title_elem = item.find(f"{{{RSS_NS}}}title")
+                link_elem = item.find(f"{{{RSS_NS}}}link")
 
                 if title_elem is not None and link_elem is not None:
                     title = title_elem.text or ""
                     link = link_elem.text or ""
 
-                    # Try to extract bookmark count from description
-                    desc_elem = item.find("description")
-                    bookmarks_count = 10  # Default
-
-                    if desc_elem is not None and desc_elem.text:
-                        # Simple heuristic: look for numbers in description
-                        import re
-
-                        numbers = re.findall(r"\d+", desc_elem.text)
-                        if numbers:
-                            bookmarks_count = int(numbers[0])
+                    # Bookmark count is provided directly via hatena:bookmarkcount
+                    count_elem = item.find(f"{{{HATENA_NS}}}bookmarkcount")
+                    bookmarks_count = int(count_elem.text) if count_elem is not None and count_elem.text else 0
 
                     # Filter: 10+ bookmarks (or just include all from hot entries)
                     if bookmarks_count >= 10 or link:
@@ -239,7 +235,8 @@ def fetch_wiz_blog():
             if title_elem is None:
                 continue
 
-            title = (title_elem.text or "").strip().lstrip("<![CDATA[").rstrip("]]>")
+            # ElementTree already unwraps CDATA sections into plain text.
+            title = (title_elem.text or "").strip()
             # <link> in Atom may use href attribute instead of text
             if link_elem is not None:
                 url = (link_elem.text or link_elem.get("href") or "").strip()
@@ -274,27 +271,29 @@ def fetch_arxiv_csLG():
     papers = []
 
     time.sleep(15)  # Respect Crawl-delay: 15 per arxiv.org robots.txt
-    html = fetch_text("https://arxiv.org/list/cs.LG/recent", ARXIV_UA)
-    if not html:
+    listing_html = fetch_text("https://arxiv.org/list/cs.LG/recent", ARXIV_UA)
+    if not listing_html:
         return papers
 
     # arXiv listing pages use <dt>/<dd> pairs.
     # <dt> contains the sequence number and arXiv ID link.
     # <dd> contains title (class="list-title"), authors, and subjects.
     dt_dd_re = re.compile(r"<dt>(.*?)</dt>\s*<dd>(.*?)</dd>", re.DOTALL)
-    id_re = re.compile(r'href="/abs/(\d{4}\.\d{4,5})"')
-    # Title: <div class="list-title mathjax"><span class="descriptor">Title:</span>\nPAPER TITLE</div>
+    # arXiv HTML uses inconsistent quoting/spacing (e.g. href ='...' or href="..."),
+    # so match either quote style and allow whitespace around '='.
+    id_re = re.compile(r'href\s*=\s*["\']/abs/(\d{4}\.\d{4,5})["\']')
+    # Title: <div class='list-title mathjax'><span class='descriptor'>Title:</span>\nPAPER TITLE</div>
     title_re = re.compile(
-        r'class="list-title[^"]*"[^>]*>.*?class="descriptor"[^>]*>.*?</span>\s*(.*?)\s*</div>',
+        r'class=["\']list-title[^"\']*["\'][^>]*>.*?class=["\']descriptor["\'][^>]*>.*?</span>\s*(.*?)\s*</div>',
         re.DOTALL | re.IGNORECASE,
     )
-    # Subjects: <span class="primary-subject">Machine Learning (cs.LG)</span>
+    # Subjects: <span class='primary-subject'>Machine Learning (cs.LG)</span>
     subject_re = re.compile(
-        r'class="primary-subject"[^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
+        r'class=["\']primary-subject["\'][^>]*>(.*?)</span>', re.DOTALL | re.IGNORECASE
     )
     tag_re = re.compile(r"<[^>]+>")
 
-    for m in dt_dd_re.finditer(html):
+    for m in dt_dd_re.finditer(listing_html):
         dt_content = m.group(1)
         dd_content = m.group(2)
 
@@ -308,7 +307,7 @@ def fetch_arxiv_csLG():
         title_match = title_re.search(dd_content)
         if not title_match:
             continue
-        title = re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip()
+        title = html.unescape(re.sub(r"\s+", " ", tag_re.sub("", title_match.group(1))).strip())
 
         # Extract primary subject
         subj_match = subject_re.search(dd_content)
