@@ -6,6 +6,7 @@ Fetches data from Hacker News, Reddit, and Hatena Bookmark with proper rate limi
 
 import html
 import json
+import sys
 import time
 import urllib.request
 import urllib.error
@@ -29,7 +30,7 @@ def fetch_json(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return json.loads(response.read().decode())
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        print(f"Error fetching {url}: {e}", file=sys.stderr, flush=True)
         return None
 
 
@@ -40,13 +41,13 @@ def fetch_text(url, user_agent, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.read().decode()
     except Exception as e:
-        print(f"Error fetching {url}: {e}", flush=True)
+        print(f"Error fetching {url}: {e}", file=sys.stderr, flush=True)
         return None
 
 
 def fetch_hacker_news():
     """Fetch Hacker News top stories with 50+ points"""
-    print("[1/5] Fetching Hacker News...", flush=True)
+    print("[1/5] Fetching Hacker News...", file=sys.stderr, flush=True)
     stories = []
 
     # Get top story IDs
@@ -76,13 +77,13 @@ def fetch_hacker_news():
                 }
             )
 
-    print(f"  → Fetched {len(stories)} stories", flush=True)
+    print(f"  → Fetched {len(stories)} stories", file=sys.stderr, flush=True)
     return stories
 
 
 def fetch_reddit():
     """Fetch Reddit posts from AI, Tech, and General subreddits"""
-    print("[2/5] Fetching Reddit...", flush=True)
+    print("[2/5] Fetching Reddit...", file=sys.stderr, flush=True)
     posts = []
 
     # AI-focused (60% weight)
@@ -106,7 +107,7 @@ def fetch_reddit():
     ]:
         for sub in sub_list:
             time.sleep(1)  # 1-second delay between requests
-            print(f"  → Fetching r/{sub}...", flush=True)
+            print(f"  → Fetching r/{sub}...", file=sys.stderr, flush=True)
 
             data = fetch_json(
                 f"https://old.reddit.com/r/{sub}/hot.json?limit=25", REDDIT_UA
@@ -135,13 +136,13 @@ def fetch_reddit():
                         }
                     )
 
-    print(f"  → Fetched {len(posts)} posts", flush=True)
+    print(f"  → Fetched {len(posts)} posts", file=sys.stderr, flush=True)
     return posts
 
 
 def fetch_hatena():
     """Fetch Hatena Bookmark hot entries from RSS feeds"""
-    print("[3/5] Fetching Hatena Bookmark...", flush=True)
+    print("[3/5] Fetching Hatena Bookmark...", file=sys.stderr, flush=True)
     bookmarks = []
 
     categories = [
@@ -153,7 +154,7 @@ def fetch_hatena():
 
     for url, category in categories:
         time.sleep(5)  # 5-second delay per Hatena robots.txt Crawl-delay directive
-        print(f"  → Fetching {url}...", flush=True)
+        print(f"  → Fetching {url}...", file=sys.stderr, flush=True)
 
         xml_content = fetch_text(url, HATENA_UA)
         if not xml_content:
@@ -185,10 +186,10 @@ def fetch_hatena():
                             }
                         )
         except Exception as e:
-            print(f"  Error parsing XML: {e}", flush=True)
+            print(f"  Error parsing XML: {e}", file=sys.stderr, flush=True)
             continue
 
-    print(f"  → Fetched {len(bookmarks)} bookmarks", flush=True)
+    print(f"  → Fetched {len(bookmarks)} bookmarks", file=sys.stderr, flush=True)
     return bookmarks
 
 
@@ -197,7 +198,7 @@ def fetch_wiz_blog():
     robots.txt: Allow: / for all agents (no restrictions, no Crawl-delay).
     Uses RSS feed at https://www.wiz.io/feed/rss.xml for reliable parsing.
     """
-    print("[4/5] Fetching Wiz Blog...", flush=True)
+    print("[4/5] Fetching Wiz Blog...", file=sys.stderr, flush=True)
     articles = []
 
     xml_content = fetch_text("https://www.wiz.io/feed/rss.xml", WIZ_UA)
@@ -254,9 +255,9 @@ def fetch_wiz_blog():
                     "source": "WizBlog",
                 })
     except Exception as e:
-        print(f"  Error parsing Wiz RSS: {e}", flush=True)
+        print(f"  Error parsing Wiz RSS: {e}", file=sys.stderr, flush=True)
 
-    print(f"  → Fetched {len(articles)} articles", flush=True)
+    print(f"  → Fetched {len(articles)} articles", file=sys.stderr, flush=True)
     return articles
 
 
@@ -267,7 +268,7 @@ def fetch_arxiv_csLG():
     """
     import re
 
-    print("[5/5] Fetching arXiv cs.LG/recent...", flush=True)
+    print("[5/5] Fetching arXiv cs.LG/recent...", file=sys.stderr, flush=True)
     papers = []
 
     time.sleep(15)  # Respect Crawl-delay: 15 per arxiv.org robots.txt
@@ -321,13 +322,13 @@ def fetch_arxiv_csLG():
             "source": "arXiv_csLG",
         })
 
-    print(f"  → Fetched {len(papers)} papers", flush=True)
+    print(f"  → Fetched {len(papers)} papers", file=sys.stderr, flush=True)
     return papers
 
 
 def main():
     """Main function to fetch all trends data"""
-    print("=== Daily Trends Data Fetcher ===\n", flush=True)
+    print("=== Daily Trends Data Fetcher ===\n", file=sys.stderr, flush=True)
     start_time = time.time()
 
     # Fetch from all sources
@@ -356,9 +357,9 @@ def main():
     }
 
     elapsed = time.time() - start_time
-    print(f"\n=== Collection Complete ===", flush=True)
-    print(f"Total articles: {result['summary']['total']}", flush=True)
-    print(f"Time elapsed: {elapsed:.1f} seconds", flush=True)
+    print(f"\n=== Collection Complete ===", file=sys.stderr, flush=True)
+    print(f"Total articles: {result['summary']['total']}", file=sys.stderr, flush=True)
+    print(f"Time elapsed: {elapsed:.1f} seconds", file=sys.stderr, flush=True)
 
     # Output JSON
     print(json.dumps(result, indent=2, ensure_ascii=False))
