@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "id": "concrete-sentences",
+      "title": "Concrete sentences supporting understanding",
+      "check": "The document contains concrete, detailed sentences that demonstrate understanding of the topic, not vague statements like \"I understand X\".",
+      "scopes": ["common"]
+    },
+    {
+      "id": "applicability-conditions",
+      "title": "Applicability conditions",
+      "check": "The document describes who would use this, when, and where it applies.",
+      "scopes": ["common"]
+    },
+    {
+      "id": "license-and-copyright",
+      "title": "License and copyright information",
+      "check": "The document includes license and copyright information for any quoted or referenced source material, in the Meta Information section.",
+      "scopes": ["common"]
+    },
+    {
+      "id": "ml-clear-io",
+      "title": "Clear input and output",
+      "check": "For any algorithm or model described, the input and output are clearly and explicitly specified (types, shapes, or formats as applicable).",
+      "scopes": ["machine-learning"]
+    },
+    {
+      "id": "ml-pseudocode",
+      "title": "Algorithms described with pseudocode",
+      "check": "Any algorithm is described with pseudocode or an equivalent step-by-step formalism, not only prose.",
+      "scopes": ["machine-learning"]
+    },
+    {
+      "id": "ml-datasets-explained",
+      "title": "Datasets explicitly explained",
+      "check": "Any dataset used or referenced is explicitly explained (what it contains, its size or scale, and why it is relevant).",
+      "scopes": ["machine-learning"]
+    },
+    {
+      "id": "ml-calculation-order",
+      "title": "Clear calculation order",
+      "check": "The order in which computations happen is unambiguous (e.g. via numbered steps, a pipeline diagram, or explicit sequencing language).",
+      "scopes": ["machine-learning"]
+    },
+    {
+      "id": "ml-algorithm-differentiation",
+      "title": "Differentiation from similar algorithms",
+      "check": "The document describes how this algorithm or technique differs from similar/competing algorithms or techniques.",
+      "scopes": ["machine-learning"]
+    },
+    {
+      "id": "dance-move-provenance",
+      "title": "Move provenance and sourcing honesty",
+      "check": "For each named move, the document states its known origin/originator and era when sources establish one, and explicitly flags when sources disagree or are too thin to confirm a detail (rather than presenting an unverified claim as settled fact).",
+      "scopes": ["dance"]
+    },
+    {
+      "id": "dance-body-mechanics",
+      "title": "Concrete body mechanics",
+      "check": "Each move is described in terms of concrete body mechanics (which joints or body parts move, and on which beat/count), not vague language like \"feel the groove\".",
+      "scopes": ["dance"]
+    },
+    {
+      "id": "dance-style-family",
+      "title": "Style/family attribution",
+      "check": "Each move states which dance style or family it belongs to (e.g. Hip-Hop, Locking, Popping, Breaking), so it is not mislabeled across styles.",
+      "scopes": ["dance"]
+    },
+    {
+      "id": "chess-no-piece-movement-rules",
+      "title": "No piece-movement rules",
+      "check": "The document does not explain how individual pieces move (that is assumed prior knowledge); it focuses on strategic principles and named concepts instead.",
+      "scopes": ["chess"]
+    },
+    {
+      "id": "chess-principle-reasoning",
+      "title": "Reasoning behind principles",
+      "check": "For each principle, opening family, or endgame technique named, the document explains why it works (the underlying strategic or tactical reasoning), not only its name.",
+      "scopes": ["chess"]
+    },
+    {
+      "id": "chess-concept-category",
+      "title": "Concept categorization",
+      "check": "Each named opening family or endgame technique states which broader category it belongs to (e.g. open game vs. closed game; king-side vs. queen-side endgame), so unrelated concepts are not conflated.",
+      "scopes": ["chess"]
+    }
+  ]
+}
