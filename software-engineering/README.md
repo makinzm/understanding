@@ -36,3 +36,7 @@ Each document in this directory should follow this structure:
 
 - Use kebab-case for all filenames (e.g., `clean-architecture.md`)
 - Generate filenames with: `echo "Title" | bash scripts/title-converter.sh`
+
+## Document Factory
+
+This directory has no topic-specific DoD items yet; only the `common` scope in this repository's [Document Factory](../dod/deliverables-dod.json) applies here. See the top-level README's "Document Factory" section.

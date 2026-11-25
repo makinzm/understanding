@@ -22,5 +22,18 @@
       "Bash(rm -rf *)",
       "Bash(sudo *)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/dod-review-check.sh"
+          }
+        ]
+      }
+    ]
   }
 }
