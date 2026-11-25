@@ -67,6 +67,12 @@
       "scopes": ["dance"]
     },
     {
+      "id": "dance-requested-move-coverage",
+      "title": "Requested move coverage",
+      "check": "When specific named moves were requested for a style's basic-steps document, each requested move is covered explicitly by its own name (not only implied by a generic groove description).",
+      "scopes": ["dance"]
+    },
+    {
       "id": "chess-no-piece-movement-rules",
       "title": "No piece-movement rules",
       "check": "The document does not explain how individual pieces move (that is assumed prior knowledge); it focuses on strategic principles and named concepts instead.",
@@ -82,6 +88,12 @@
       "id": "chess-concept-category",
       "title": "Concept categorization",
       "check": "Each named opening family or endgame technique states which broader category it belongs to (e.g. open game vs. closed game; king-side vs. queen-side endgame), so unrelated concepts are not conflated.",
+      "scopes": ["chess"]
+    },
+    {
+      "id": "chess-phase-scope",
+      "title": "Game-phase scope discipline",
+      "check": "A document under chess/opening/ stays within opening-phase concepts, and a document under chess/ending/ stays within endgame-phase concepts; middlegame-specific content does not creep into either.",
       "scopes": ["chess"]
     }
   ]

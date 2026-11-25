@@ -7,7 +7,7 @@
 
 ## Overview
 
-Locking is a funk-era street dance style originated by Don "Campbellock" Campbell in Los Angeles in the late 1960s/early 1970s, and later performed by his crew The Lockers. It is one of the "four corners" of street dance alongside Breaking, Popping, and (later) Hip-Hop/Street Jazz-derived styles. Locking is largely improvisational/freestyle: dancers return to a signature freeze ("The Lock") between movements rather than following a fixed sequence, so the moves below are a shared vocabulary to draw from, not a fixed routine.
+Locking is a funk-era street dance style originated by Don "Campbellock" Campbell in Los Angeles in the late 1960s/early 1970s, and later performed by his crew The Lockers. It is commonly grouped with Breaking, Popping, and (later) Hip-Hop/Street Jazz-derived styles as one of street dance's foundational styles (sometimes called the "four corners"); this grouping and its exact membership come from secondary (encyclopedia/blog) sources and vary somewhat across sources, rather than being a single settled classification. Locking is largely improvisational/freestyle: dancers return to a signature freeze ("The Lock") between movements rather than following a fixed sequence, so the moves below are a shared vocabulary to draw from, not a fixed routine.
 
 ## Key Concepts
 

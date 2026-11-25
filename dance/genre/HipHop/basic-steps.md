@@ -35,7 +35,7 @@ Hip-Hop here refers to the social/old-school street dance vocabulary that grew o
 
 **Style/family:** Hip-Hop (old-school social dance move, not a Locking move — see Comparison below).
 
-**Provenance:** Named after the character in the 1988 film *Who Framed Roger Rabbit*, and popularized in hip-hop in the late 1980s; one source credits Bobby Brown's 1989 "Every Little Step" video as a key moment for its popularity. **Sourcing note:** written tutorials disagree on the exact footwork — this document describes the most-detailed written version found (Steezy's), but at least two other distinct descriptions exist (see References), so treat the exact count/footwork as having real variation across teachers rather than one canonical standard.
+**Provenance:** Sources attribute the name to the character in the 1988 film *Who Framed Roger Rabbit*, with the move becoming popular in hip-hop in the late 1980s; one source credits Bobby Brown's 1989 "Every Little Step" video as a key moment for its popularity. These accounts come from dance-blog/tutorial sites, not a verified primary account of the naming itself. **Sourcing note:** written tutorials disagree on the exact footwork — this document describes the most-detailed written version found (Steezy's), but at least two other distinct descriptions exist (see References), so treat the exact count/footwork as having real variation across teachers rather than one canonical standard.
 
 **Body mechanics (Steezy version):** Start with a rock step, leaning the upper body back and then forward. As the tempo increases, rise onto the balls of the feet and hop while switching which leg is forward, producing the bouncing, rabbit-like travel that gives the move its name. The arms typically swing in opposition to the legs.
 

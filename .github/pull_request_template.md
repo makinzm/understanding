@@ -28,8 +28,10 @@
 - [ ] State each move's provenance, flagging thin/conflicting sources explicitly
 - [ ] Describe concrete body mechanics (joint/body part, beat/count)
 - [ ] State which dance style/family each move belongs to
+- [ ] Cover each specifically-requested named move by name, not just implicitly
 
 ### Chess (if applicable)
 - [ ] Never explain how a piece moves (assumed prior knowledge)
 - [ ] Explain why each principle/technique works, not only its name
 - [ ] State which broader category each named concept belongs to
+- [ ] Stay within the directory's declared game phase (no middlegame content in `opening/`/`ending/`)
