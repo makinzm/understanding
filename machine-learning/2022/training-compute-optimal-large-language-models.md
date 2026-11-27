@@ -91,6 +91,23 @@ This means: for every 1 billion parameters, a compute-optimal model should be tr
 > [!NOTE]
 > 20 appears from Table3. In this paper, there is no explanation about optimal rules but you can calculate number of parameters / number of tokens.
 
+## 2.7 Compute-Optimal Allocation Table (Table 3)
+
+The paper provides explicit compute-optimal $(N_{\text{opt}}, D_{\text{opt}})$ recommendations for concrete compute budgets:
+
+| FLOPs $C$ | Optimal params $N_{\text{opt}}$ | Optimal tokens $D_{\text{opt}}$ | Example model at this budget |
+|------------|--------------------------------|--------------------------------|------------------------------|
+| $1.84 \times 10^{22}$ | 5B | 100B | — |
+| $1.00 \times 10^{23}$ | 10B | 200B | — |
+| $3.16 \times 10^{23}$ | 17B | 290B | — |
+| $5.76 \times 10^{23}$ | 22B | 500B | ← Gopher compute budget |
+| $1.00 \times 10^{24}$ | 29B | 617B | — |
+| $3.16 \times 10^{24}$ | 52B | 1.1T | — |
+| $1.00 \times 10^{25}$ | 94B | 2.0T | — |
+
+> [!NOTE]
+> Gopher (280B parameters, 300B tokens) uses compute $5.76 \times 10^{23}$ FLOPs. The compute-optimal model for this budget is ~22B parameters trained on ~500B tokens — not 280B on 300B. Chinchilla (70B, 1.4T) is a conservative overtraining of this recommendation, achieving even better results.
+
 # 3. Chinchilla: Validation of the Scaling Law
 
 ## 3.1 Model Design
@@ -152,6 +169,20 @@ Both Chinchilla and Gopher are **dense autoregressive transformer** language mod
 | TriviaQA unfiltered (5-shot) | **73.2%** | 63.6% | 71.2%   |
 
 Chinchilla outperforms Gopher (4× larger), GPT-3 (2.5× larger), and MT-NLG 530B (7.5× larger) on most benchmarks, while using the same or less compute during pre-training.
+
+## 4.3 Evaluation Protocol
+
+Benchmarks span diverse task types evaluated under few-shot settings:
+
+- **MMLU** (Massive Multitask Language Understanding): 57 academic subjects, 5-shot accuracy; covers STEM, humanities, social sciences
+- **BIG-bench**: 62 tasks testing diverse reasoning and language capabilities; averaged accuracy
+- **Language modeling**: WikiText-103 and The Pile subsets measured in bits-per-byte (bpb)
+- **Reading comprehension**: LAMBADA (0-shot word prediction), RACE-middle and RACE-high (few-shot)
+- **Closed-book QA**: Natural Questions and TriviaQA under 5-shot settings
+- **Common sense**: WinoGrande, HellaSwag, PiQA (few-shot accuracy)
+
+> [!NOTE]
+> MMLU's expert-level human performance is approximately 89.8%. Chinchilla at 67.6% was considered a significant milestone at the time, exceeding what had been forecast for models of this size.
 
 # 5. Comparison with Prior Work (Kaplan et al. 2020)
 
